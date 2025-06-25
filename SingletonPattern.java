@@ -1,6 +1,6 @@
 // File contents:
 // 1- Application class that allows only one app to run at an instant.
-// 4- Main class to demonstrate the singleton pattern
+// 2- Main class to demonstrate the singleton pattern
 
 class Application {
     private static Application appInstance;
@@ -22,7 +22,7 @@ class Application {
         return appInstance;
     }
 
-    void closeApplication() {
+    public void closeApplication() {
         System.out.println("Closing Application: " + appInstance.appName + "...");
         appInstance = null;
     }
