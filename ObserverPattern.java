@@ -31,7 +31,7 @@ class Subject {
 class Person implements Observer {
     private String name;
 
-    public Person (String name) {
+    public Person(String name) {
         this.name = name;
     }
 
@@ -42,7 +42,7 @@ class Person implements Observer {
 
 public class ObserverPattern {
     public static void main(String[] args) {
-        System.out.println("\n\nThis is the observer pattern file!\n");
+        System.out.println("\n\nThis is the ObserverPattern file!\n");
 
         Subject chef = new Subject();
 
@@ -67,5 +67,7 @@ public class ObserverPattern {
         System.out.println();
 
         chef.notifyObservers("Desserts are in 5 minutes!");
+
+        System.out.println("\nThis is the end of the ObserverPattern file.\n");
     }
 }
