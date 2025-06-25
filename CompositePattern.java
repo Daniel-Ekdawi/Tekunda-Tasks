@@ -1,8 +1,7 @@
 // File contents:
-// 1- Composite interface
-// 2- Subject class
-// 3- Person class that implements Observer
-// 4- Main class to demonstrate the observer pattern
+// 1- Human (Composite) interface
+// 2- Student and Employee classes implementing Human
+// 3- Main class to demonstrate the composite pattern
 
 interface Human {
     void dailyRoutine();
