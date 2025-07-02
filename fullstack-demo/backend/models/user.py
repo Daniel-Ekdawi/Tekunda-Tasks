@@ -14,7 +14,7 @@ class User(Document):
     is_active: bool
     mobile_number: Annotated[str, constr(min_length=10, max_length=15)]
     job: str
-    role: UserRole = UserRole.viewer
+    role: UserRole = UserRole.VIEWER
 
     @property
     def age(self) -> int:
