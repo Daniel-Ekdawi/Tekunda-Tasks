@@ -32,7 +32,7 @@ const signup = async userData => {
         email: userData["Email"],
         password: userData["Password"],
         date_of_birth: userData["Date of Birth"],
-        gender: userData["Gender"],
+        gender: userData["Gender"].toUpperCase(),
         mobile_number: userData["Phone Number"],
         job: userData["Job"],
         role: userData["Role"]
@@ -44,7 +44,8 @@ const signup = async userData => {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(formattedData)
+            body: JSON.stringify(formattedData),
+            credentials: formattedData.role === 'hotel_admin' ? "omit" : "include"
         })
         const result = await response.json()
 
