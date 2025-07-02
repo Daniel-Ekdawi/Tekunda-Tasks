@@ -1,3 +1,4 @@
 *.class
 __pycache__/
 *.py[cod]
+fullstack-demo/frontend/package-lock.json
