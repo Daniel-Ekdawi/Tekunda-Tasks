@@ -1,12 +1,6 @@
-import { GUEST_LINKS, HOTEL_ADMIN_LINKS, SUPER_ADMIN_LINKS, VIEWER_LINKS } from "@/constants/NAVBAR_LINKS"
+import getAllowedLinks from '@/lib/getAllowedLinks';
 
 const getNavbarLinks = (role, clearUser) => {
-    const linksAllowedForRoles = {
-        'viewer': VIEWER_LINKS,
-        'hotel_admin': HOTEL_ADMIN_LINKS,
-        'super_admin': SUPER_ADMIN_LINKS
-    }
-
     const allLinks = [
         {
             title: 'Profile',
@@ -28,9 +22,9 @@ const getNavbarLinks = (role, clearUser) => {
 
     if (!role) return []
 
-    const links = allLinks.filter(link => role === 'guest' ? GUEST_LINKS.includes(link.title) : linksAllowedForRoles[role].includes(link.title))
+    const links = allLinks.filter(link => getAllowedLinks(role).includes(link.title))
 
     return links
 }
 
-export { getNavbarLinks }
+export default getNavbarLinks

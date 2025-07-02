@@ -26,7 +26,7 @@ const InputField = ({ title, formData, setFormData }) => {
         required
     >
         <option value="" disabled>Select {titleLower}</option>
-        <option value={"visitor"}>Visitor</option>
+        <option value={"viewer"}>Viewer</option>
         <option value={"hotel_admin"}>Hotel Admin</option>
     </select>
 
