@@ -1,16 +1,25 @@
-import { useSession } from "@/components/context/SessionContext"
+const getNavbarLinks = (user, clearUser) => {
+    const role = user?.role
 
-const getNavbarLinks = () => {
-    const { user, clearUser } = useSession()
-    const isAuth = Boolean(user)
+    const guestLinks = ['Login']
+    const viewerLinks = ['Profile', 'Logout']
+    const hotelAdminLinks = ['Profile', 'Logout']
+    const superAdminLinks = ['Profile', 'Users', 'Logout']
 
-    const authenticatedLinks = ['Profile']
-    const unauthenticatedLinks = ['Login']
+    const linksAllowedForRoles = {
+        'viewer': viewerLinks,
+        'hotel_admin': hotelAdminLinks,
+        'super_admin': superAdminLinks
+    }
 
     const allLinks = [
         {
             title: 'Profile',
             url: 'profile'
+        },
+        {
+            title: 'Users',
+            url: 'users'
         },
         {
             title: 'Login',
@@ -22,10 +31,7 @@ const getNavbarLinks = () => {
         }
     ]
 
-    const links = allLinks.filter(link => (isAuth && authenticatedLinks.includes(link.title)) ||
-        (!isAuth && unauthenticatedLinks.includes(link.title)) ||
-        (!authenticatedLinks.includes(link.title) && !unauthenticatedLinks.includes(link.title))
-    )
+    const links = allLinks.filter(link => !role ? guestLinks.includes(link.title) : linksAllowedForRoles[role].includes(link.title))
 
     return links
 }

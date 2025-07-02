@@ -1,17 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import logo from '/public/layout/navbar/logo.png'
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { getNavbarLinks } from "@/constants/NavbarLinks";
+import { useSession } from "../context/SessionContext";
 
 const Navbar = () => {
+    const { user, clearUser } = useSession()
+    const [navbarLinks, setNavbarLinks] = useState([])
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter()
 
-    const navbarLinks = getNavbarLinks()
+    useEffect(() => {
+        setNavbarLinks(getNavbarLinks(user, clearUser))
+    }, [user])
 
     return (
         <nav className={
