@@ -41,8 +41,10 @@ const LoginPage = () => {
         const result = await signup(formData)
         if (result?.error) return setMessage({ text: result.error || 'Signup failed!', type: 'error' }) // error
         
-        setUser(result.user)
         setMessage({ text: 'Successfully created an account!', type: 'success' }) // success
+
+        if (result.user.role === 'hotel_admin') return router.push('/')
+        setUser(result.user)
         router.push('profile') // redirect
     }
 
