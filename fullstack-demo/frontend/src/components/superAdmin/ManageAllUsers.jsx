@@ -32,10 +32,10 @@ const ManageAllUsersComponent = () => {
         getUsers()
     }, [])
 
-    const handleUserActiveToggle = async id => {
+    const handleUserActiveToggle = async (id, oldActiveValue) => {
         const result = await toggleUserActiveById(id)
         if (!result || result.error) return setMessage({ text: 'Something went wrong...', type: 'error' })
-        const newActiveValue = !user.is_active
+        const newActiveValue = !oldActiveValue
         user.is_active = newActiveValue
         setUsers(oldUsersData => {
             const newUserData = {}
@@ -47,7 +47,6 @@ const ManageAllUsersComponent = () => {
                         user.is_active = newActiveValue
                     }
                     newCategorizedUsersGroup.push(user)
-                    console.log(newCategorizedUsersGroup)
                 })
                 newUserData[role] = newCategorizedUsersGroup
             })
@@ -56,23 +55,16 @@ const ManageAllUsersComponent = () => {
     }
 
     const handleUserDelete = async id => {
-        if (user.id === id) console.log('yay')
-        console.log(user)
-        return
+        if (user.id === id) return setMessage({ text: 'Cannot delete own account', type: 'error' })
         const result = await deleteUserById(id)
         if (!result || result.error) return setMessage({ text: 'Something went wrong...', type: 'error' })
-        const newActiveValue = !user.is_active
-        user.is_active = newActiveValue
         setUsers(oldUsersData => {
             const newUserData = {}
             Object.entries(oldUsersData).forEach(category => {
                 const [role, categorizedUsersGroup] = category
                 const newCategorizedUsersGroup = []
                 categorizedUsersGroup.forEach(user => {
-                    if (user._id === id) {
-                        user.is_active = newActiveValue
-                    }
-                    newCategorizedUsersGroup.push(user)
+                    if (user._id !== id) newCategorizedUsersGroup.push(user)
                 })
                 newUserData[role] = newCategorizedUsersGroup
             })
@@ -109,7 +101,7 @@ const ManageAllUsersComponent = () => {
                                                 <td key={property} className="p-2 border">
                                                     {property === "is_active" ? (
                                                         <button
-                                                            onClick={() => handleUserActiveToggle(user._id)}
+                                                            onClick={() => handleUserActiveToggle(user._id, user.is_active)}
                                                             className="flex items-center justify-center w-full"
                                                         >
                                                             {user[property] ? (
