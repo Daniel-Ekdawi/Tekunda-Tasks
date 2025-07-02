@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/constants/URL"
+import { BASE_URL } from "@/constants/URLS"
 
 const login = async userData => {
     const formattedData = {
