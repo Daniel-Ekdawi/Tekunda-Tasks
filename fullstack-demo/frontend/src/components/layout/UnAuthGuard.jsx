@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useSession } from '@/components/context/SessionContext';
 
 export default function UnAuthGuard({ children }) {
-    const { user, isReady } = useSession();
+    const { user, role, isReady } = useSession();
     const router = useRouter();
 
     useEffect(() => {
-        if (user && isReady) router.replace('/profile')
-    }, [user, isReady]);
+        if (['viewer', 'hotel_admin', 'super_admin'].includes(role) && isReady) router.replace('/profile')
+    }, [role, isReady]);
 
     if (!isReady || user) return null;
 

@@ -14,13 +14,13 @@ export default function RootLayout({ children }) {
     return (
         <html lang="en">
             <body className={`antialiased`}>
-                <SessionProvider>
-                    <NotificationProvider>
+                <NotificationProvider>
+                    <SessionProvider>
                         <Navbar />
                         <Notification />
                         {children}
-                    </NotificationProvider>
-                </SessionProvider>
+                    </SessionProvider>
+                </NotificationProvider>
             </body>
         </html>
     );

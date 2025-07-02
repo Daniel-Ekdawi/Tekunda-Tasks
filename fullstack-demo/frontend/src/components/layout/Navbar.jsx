@@ -5,18 +5,19 @@ import Link from "next/link";
 import logo from '/public/layout/navbar/logo.png'
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { getNavbarLinks } from "@/constants/NavbarLinks";
+import { getNavbarLinks } from "@/lib/getNavbarLinks";
 import { useSession } from "../context/SessionContext";
 
 const Navbar = () => {
-    const { user, clearUser } = useSession()
+    const { role, clearUser } = useSession()
     const [navbarLinks, setNavbarLinks] = useState([])
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter()
 
     useEffect(() => {
-        setNavbarLinks(getNavbarLinks(user, clearUser))
-    }, [user])
+        const links = getNavbarLinks(role, clearUser)
+        setNavbarLinks(links)
+    }, [role])
 
     return (
         <nav className={

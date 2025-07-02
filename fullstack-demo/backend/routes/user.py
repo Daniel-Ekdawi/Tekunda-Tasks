@@ -69,7 +69,12 @@ async def login_user(login: LoginRequest):
 @router.post("/logout")
 async def logout():
     response = JSONResponse(content={"message": "Logged out"})
-    response.delete_cookie("token")
+    response.delete_cookie(
+        key="token",
+        path="/",
+        samesite="none",
+        secure=True
+    )
     return response
 
 # Toggle active status of user

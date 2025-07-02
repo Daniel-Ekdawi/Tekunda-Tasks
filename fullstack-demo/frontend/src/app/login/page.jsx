@@ -7,8 +7,8 @@ import { useNotification } from "@/components/context/NotificationContext"
 import InputField from "@/components/login/InputField"
 import GreenButton from "@/components/buttons/GreenButton"
 
-import { login, signup } from "@/api/login"
-import { LOGIN_FIELDS, SIGNUP_FIELDS } from "@/constants/InputFields"
+import { login, signup } from "@/api/auth"
+import { LOGIN_FIELDS, SIGNUP_FIELDS } from "@/constants/INPUT_FIELDS"
 import { useSession } from "@/components/context/SessionContext"
 
 const LoginPage = () => {
@@ -32,8 +32,7 @@ const LoginPage = () => {
     const handleLogin = async () => {
         const result = await login(formData)
         if (result?.error) return setMessage({ text: result.error || 'Login failed!', type: 'error' }) // error
-
-        setUser(result)
+        setUser(result.user)
         setMessage({ text: `Welcome back, ${result.user.username}!`, type: 'success' }) // success
         router.push('profile') // redirect
     }
@@ -42,7 +41,7 @@ const LoginPage = () => {
         const result = await signup(formData)
         if (result?.error) return setMessage({ text: result.error || 'Signup failed!', type: 'error' }) // error
         
-        setUser(result)
+        setUser(result.user)
         setMessage({ text: 'Successfully created an account!', type: 'success' }) // success
         router.push('profile') // redirect
     }

@@ -3,16 +3,18 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/components/context/SessionContext';
+import { getNavbarLinks } from '@/lib/getNavbarLinks';
 
 export default function AuthGuard({ children }) {
-    const { user, isReady } = useSession();
+    const { user, isReady, role } = useSession();
     const router = useRouter();
 
     useEffect(() => {
-        if (!user && isReady) router.replace('/login');
-    }, [user, isReady]);
+        const links = getNavbarLinks(role).filter(link => link.title !== 'Logout')
+        if (role === 'guest' && isReady) router.replace('/login');
+    }, [role, isReady]);
 
-    if (!isReady || !user) return null; 
+    if (!isReady || !user) return null;
 
     return children;
 }
