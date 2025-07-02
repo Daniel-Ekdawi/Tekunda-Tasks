@@ -1,30 +1,15 @@
 import getAllowedLinks from '@/lib/getAllowedLinks';
 
 const getNavbarLinks = (role, clearUser) => {
-    const allLinks = [
-        {
-            title: 'Profile',
-            url: 'profile'
-        },
-        {
-            title: 'Users',
-            url: 'users'
-        },
-        {
-            title: 'Login',
-            url: 'login'
-        },
-        {
-            title: 'Logout',
-            onClick: () => clearUser()
-        }
-    ]
+    const logout = { title: 'Logout', onClick: clearUser };
 
+    const links = [...getAllowedLinks(role)];
+    
+    const filteredLinks = links.map(link => (link.title === 'Logout' ? logout : link)) 
+    
     if (!role) return []
 
-    const links = allLinks.filter(link => getAllowedLinks(role).includes(link.title))
-
-    return links
+    return filteredLinks
 }
 
 export default getNavbarLinks

@@ -1,6 +1,6 @@
-const GUEST_LINKS = ['Login']
-const VIEWER_LINKS = ['Profile', 'Logout']
-const HOTEL_ADMIN_LINKS = ['Profile', 'Logout']
-const SUPER_ADMIN_LINKS = ['Profile', 'Users', 'Logout']
+const GUEST_LINKS = [{ title: 'Login', url: 'login' }]
+const VIEWER_LINKS = [{ title: 'Profile', url: 'profile' }, { title: 'Logout' }]
+const HOTEL_ADMIN_LINKS = [{ title: 'Profile', url: 'profile' }, { title: 'Logout' }]
+const SUPER_ADMIN_LINKS = [{ title: 'Profile', url: 'profile' }, { title: 'Users', url: 'users' }, { title: 'Logout' }]
 
 export { GUEST_LINKS, VIEWER_LINKS, HOTEL_ADMIN_LINKS, SUPER_ADMIN_LINKS }
