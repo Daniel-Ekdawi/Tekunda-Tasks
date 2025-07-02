@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import OverlayModal from '@/components/wrappers/OverlayModal';
 import { useNotification } from '@/components/context/NotificationContext'
 
-const Notification = () => { // message is in form { text: '', type: 'error'/'success' }
+const Notification = () => { // message is in form { text: '', type: 'error'/'success'/'warning' }
     const { message } = useNotification()
     const [isOpen, setIsOpen] = useState(message?.text)
 
