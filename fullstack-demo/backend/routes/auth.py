@@ -24,6 +24,6 @@ async def validate_token(request: Request):
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
-        return user.model_dump(exclude={"password"})
+        return user.model_dump(exclude={"password"}, mode="json")
     except JWTError:
         raise HTTPException(status_code=401, detail="Token invalid")

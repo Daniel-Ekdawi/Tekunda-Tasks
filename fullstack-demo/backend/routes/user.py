@@ -22,9 +22,9 @@ class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
-def create_response_with_token(user):
+def create_response_with_token(user, status_code = 200):
     token = create_access_token({"sub": str(user.id)}, expires_delta=timedelta(minutes=60))
-    response = JSONResponse(content={"user": user.model_dump(exclude={"password"}, mode="json")})
+    response = JSONResponse(content={"user": user.model_dump(exclude={"password"}, mode="json")}, status_code=status_code)
     response.set_cookie(
         key="token",
         value=token,
@@ -42,7 +42,7 @@ async def create_user(user: User):
         hashed_pwd = hash_password(user.password)
         user.password = hashed_pwd
         await user.insert()
-        return create_response_with_token(user)
+        return create_response_with_token(user, status_code=201)
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="Username or email already exists")
     except Exception as e:

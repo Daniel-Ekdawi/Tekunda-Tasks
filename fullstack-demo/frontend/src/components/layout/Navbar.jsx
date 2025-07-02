@@ -5,7 +5,7 @@ import Link from "next/link";
 import logo from '/public/layout/navbar/logo.png'
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { getNavbarLinks } from "@/lib/getNavbarLinks";
+import getNavbarLinks from "@/lib/getNavbarLinks";
 import { useSession } from "../context/SessionContext";
 
 const Navbar = () => {

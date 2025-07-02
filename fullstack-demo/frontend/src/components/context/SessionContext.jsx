@@ -20,12 +20,15 @@ export const SessionProvider = ({ children }) => {
                     credentials: 'include',
                 });
 
-                if (!response.ok) return;
+                if (!response.ok) throw new Error();
 
                 const userData = await response.json();
+                if (!userData.role) throw new Error()
                 setUser(userData);
+                setRole(userData?.role || 'guest')
             } catch {
                 setUser(null);
+                setRole('guest')
                 logout()
             } finally {
                 setIsReady(true)
@@ -35,19 +38,16 @@ export const SessionProvider = ({ children }) => {
         fetchUser();
     }, []);
 
-    useEffect(() => {
-        setRole(user?.role || 'guest')
-    }, [user])
-
     const clearUser = async () => {
-        setUser(null)
         const result = await logout()
         if (!result || result.error) return setMessage({ text: result?.error || 'Failed to log out!', type: 'error' })
-        if (result?.message) return setMessage({ text: 'Successfully logged out!', type: 'success' })
+        if (result?.message) setMessage({ text: 'Successfully logged out!', type: 'success' })
+        setUser(null)
+        setRole('guest')
     }
-
+    
     if (!isReady) return null // to prevent loading wrong session at first
-
+    
     return (
         <SessionContext.Provider value={{
             user,
@@ -56,6 +56,7 @@ export const SessionProvider = ({ children }) => {
             clearUser,
             setUser: user => {
                 setUser(user)
+                setRole(user?.role || 'guest')
             }
         }}>
             {children}

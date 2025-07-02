@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/constants/URLs"
+import { BASE_URL } from "@/constants/URLS"
 
 const getUserById = async id => {
     try {
