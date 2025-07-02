@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { BASE_URL } from "@/constants/URLS";
+import { BASE_URL } from "@/constants/URL";
 import { logout } from "@/api/auth"
 import { useNotification } from "./NotificationContext";
 
