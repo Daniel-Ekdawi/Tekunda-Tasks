@@ -31,10 +31,11 @@ const signup = async userData => {
         username: userData["Username"],
         email: userData["Email"],
         password: userData["Password"],
-        date_of_birth: userData["Date Of Birth"],
+        date_of_birth: userData["Date of Birth"],
         gender: userData["Gender"],
         mobile_number: userData["Phone Number"],
-        job: userData["Job"]
+        job: userData["Job"],
+        role: userData["Role"]
     }
 
     try {
