@@ -1,6 +1,10 @@
 from enum import Enum
 
 class UserRole(str, Enum):
-    viewer = "viewer"
-    hotel_admin = "hotel_admin"
-    super_admin = "super_admin"
+    VIEWER = "viewer"
+    HOTEL_ADMIN = "hotel_admin"
+    SUPER_ADMIN = "super_admin"
+
+class RoomType(str, Enum):
+    SINGLE = "single"
+    DOUBLE = "double"

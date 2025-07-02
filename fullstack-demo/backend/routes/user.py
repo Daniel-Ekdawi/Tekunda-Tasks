@@ -1,12 +1,12 @@
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException, status
-from typing import List, Optional, Annotated
+from typing import List, Optional
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, EmailStr, constr, Field
+from pydantic import BaseModel, EmailStr, Field
 from datetime import date, timedelta
 from pymongo.errors import DuplicateKeyError
 from models.user import User
-from lib.hashing_password import verify_password, hide_password, hash_password
+from lib.hashing_password import verify_password, hash_password
 from lib.jwt_handler import create_access_token
 
 router = APIRouter()
