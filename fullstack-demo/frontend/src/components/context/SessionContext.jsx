@@ -20,13 +20,19 @@ export const SessionProvider = ({ children }) => {
                     credentials: 'include',
                 });
 
+                const result = await response.json()
+                
+                if (response.status == 401) throw new Error()
+                if (response.status == 403 || response.status == 404) throw new Error(result.detail)
+
                 if (!response.ok) throw new Error();
 
-                const userData = await response.json();
+                const userData = result
                 if (!userData.role) throw new Error()
                 setUser(userData);
                 setRole(userData?.role || 'guest')
-            } catch {
+            } catch (error) {
+                if (error.message) setMessage({ text: error.message, type: 'error' }) 
                 setUser(null);
                 setRole('guest')
                 logout()
