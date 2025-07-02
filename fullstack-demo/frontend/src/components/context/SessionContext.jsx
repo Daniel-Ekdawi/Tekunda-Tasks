@@ -1,30 +1,32 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { logout as removeLocalSession, setSession as storeLocalSession } from '@/lib/auth';
-import { BASE_URL } from "@/constants/URLs";
+import { BASE_URL } from "@/constants/URLS";
+import { logout } from "@/api/auth"
+import { useNotification } from "./NotificationContext";
 
 const SessionContext = createContext();
 
 export const SessionProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isReady, setIsReady] = useState(false);
+    const [role, setRole] = useState()
+    const { setMessage } = useNotification()
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch(`${BASE_URL}/auth/validateToken`, {
+                const response = await fetch(`${BASE_URL}/auth/validateToken`, {
                     credentials: 'include',
                 });
 
-                if (!res.ok) return;
+                if (!response.ok) return;
 
-                const userData = await res.json();
+                const userData = await response.json();
                 setUser(userData);
-                storeLocalSession({ user: userData });
             } catch {
                 setUser(null);
-                removeLocalSession();
+                logout()
             } finally {
                 setIsReady(true)
             }
@@ -33,19 +35,27 @@ export const SessionProvider = ({ children }) => {
         fetchUser();
     }, []);
 
-    const clearUser = () => {
-        setUser(null);
-        removeLocalSession();
-    };
+    useEffect(() => {
+        setRole(user?.role || 'guest')
+    }, [user])
+
+    const clearUser = async () => {
+        setUser(null)
+        const result = await logout()
+        if (!result || result.error) return setMessage({ text: result?.error || 'Failed to log out!', type: 'error' })
+        if (result?.message) return setMessage({ text: 'Successfully logged out!', type: 'success' })
+    }
+
+    if (!isReady) return null // to prevent loading wrong session at first
 
     return (
         <SessionContext.Provider value={{
             user,
             isReady,
+            role,
             clearUser,
             setUser: user => {
                 setUser(user)
-                storeLocalSession({ user })
             }
         }}>
             {children}

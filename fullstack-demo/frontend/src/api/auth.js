@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/constants/URLs"
+import { BASE_URL } from "@/constants/URLS"
 
 const login = async userData => {
     const formattedData = {
@@ -16,8 +16,8 @@ const login = async userData => {
             credentials: "include"
         })
         const result = await response.json()
-        
-        if (response.status !== 200) throw new Error(result.detail)
+
+        if (!response.ok) throw new Error(result.detail)
 
         if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
         return result
@@ -65,4 +65,17 @@ const signup = async userData => {
     }
 }
 
-export { login, signup }
+const logout = async () => {
+    try {
+        const response = await fetch(`${BASE_URL}/user/logout`, {
+            method: 'POST',
+            credentials: 'include',
+        });
+        const result = await response.json()
+        return result
+    } catch (error) {
+        return { error: error.message }
+    }
+}
+
+export { login, signup, logout }
