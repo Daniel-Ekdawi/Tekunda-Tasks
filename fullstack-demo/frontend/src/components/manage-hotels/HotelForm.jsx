@@ -23,7 +23,7 @@ const HotelFormComponent = ({ addHotel, updateHotel, hotelUpdating, setHotelUpda
         setIsLoading(true)
         setMessage({ text: 'Loading...', type: 'warning' })
 
-        const result = hotelUpdating ? await updateHotelById(formData.id, formData) : await createHotel(formData, user.id)
+        const result = hotelUpdating ? await updateHotelById(formData) : await createHotel({ ...formData, hotel_admin_id: user.id, max_reservations: Number(formData.max_reservations), swimming_pools: Number(formData.swimming_pools) })
         setIsLoading(false)
 
         if (result?.error) return setMessage({ text: result.error || `Failed to ${hotelUpdating ? 'update' : 'create'} hotel!`, type: 'error' }) // error
@@ -46,19 +46,7 @@ const HotelFormComponent = ({ addHotel, updateHotel, hotelUpdating, setHotelUpda
                 setFormData({})
                 setHotelUpdating()
             } else {
-                setFormData({
-                    "Name": hotelUpdating.name,
-                    "Phone Number": hotelUpdating.phone_number,
-                    "Email": hotelUpdating.email,
-                    "Swimming Pools": hotelUpdating.swimming_pools,
-                    "Max Reservations": hotelUpdating.max_reservations,
-                    "Gym": hotelUpdating.gym,
-                    "Spa": hotelUpdating.spa,
-                    "WiFi": hotelUpdating.wifi,
-                    "Parking": hotelUpdating.parking,
-                    id: hotelUpdating._id,
-                    hotel_admin_id: hotelUpdating.hotel_admin_id
-                })
+                setFormData(hotelUpdating)
             }
         }
     }, [hotelUpdating])
@@ -70,11 +58,11 @@ const HotelFormComponent = ({ addHotel, updateHotel, hotelUpdating, setHotelUpda
                 onSubmit={handleSubmit}
             >
                 <div className="text-3xl text-center mt-2 mb-4">{hotelUpdating ? "Update Hotel" : "Create Hotel"}</div>
-                {HOTEL_FIELDS.map(field => <InputField key={field.title} field={field} formData={formData} setFormData={setFormData} />)}
+                {HOTEL_FIELDS.map(field => <InputField key={field.property} field={field} formData={formData} setFormData={setFormData} />)}
                 <GreenButton
                     text={hotelUpdating ? "Update Hotel" : "Create Hotel"}
                     type="submit"
-                    disabled={isLoading || !HOTEL_FIELDS.every(field => field.required ? formData[field.title]?.toString().trim() : true)}
+                    disabled={isLoading || !HOTEL_FIELDS.every(field => field.required ? formData[field.property]?.toString().trim() : true)}
                 />
             </form>
         </div>

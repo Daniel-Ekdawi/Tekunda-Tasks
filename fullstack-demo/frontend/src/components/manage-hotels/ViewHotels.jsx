@@ -3,7 +3,7 @@
 import { getHotels, toggleHotelPropertyById } from "@/api/hotel"
 import { useSession } from "@/components/context/SessionContext"
 import ListTableManagement from "@/components/shared/ListTableManagement/ListTableManagement"
-import { useNotification } from "../../context/NotificationContext"
+import { useNotification } from "@/components/context/NotificationContext"
 import { usePathname, useRouter } from "next/navigation"
 
 const ViewHotelsComponent = ({ hotels, setHotels, handleItemDelete, handleItemUpdate }) => {

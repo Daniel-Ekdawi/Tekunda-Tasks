@@ -3,7 +3,7 @@
 import { getRooms, toggleRoomPropertyById } from "@/api/room"
 import { useSession } from "@/components/context/SessionContext"
 import ListTableManagement from "@/components/shared/ListTableManagement/ListTableManagement"
-import { useNotification } from "../../context/NotificationContext"
+import { useNotification } from "@/components/context/NotificationContext"
 
 const ViewRoomComponent = ({ hotel, rooms, setRooms, handleItemUpdate, handleItemDelete }) => {
     const { user } = useSession()

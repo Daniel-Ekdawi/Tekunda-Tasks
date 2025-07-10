@@ -1,13 +1,8 @@
-"use client"
-
-import ManageRoomsComponent from "@/components/shared/ManageRooms/ManageRooms"
-import { use } from "react"
+import ManageRoomsComponent from "@/components/manage-rooms/ManageRooms"
 
 const HotelDetails = ({ params }) => {
-    const { hotelId } = use(params)
-
     return <div className="mt-[10%]">
-        <ManageRoomsComponent hotelId={hotelId} />
+        <ManageRoomsComponent params={params} />
     </div>
 }
 

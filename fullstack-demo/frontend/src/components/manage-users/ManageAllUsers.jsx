@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { deleteUserById, getAllUsersCategorized, toggleUserActiveById } from "@/api/user";
-import ListTableManagement from "../shared/ListTableManagement/ListTableManagement";
+import ListTableManagement from "@/components/shared/ListTableManagement/ListTableManagement";
 
 const ManageAllUsersComponent = () => {
     const [users, setUsers] = useState()
@@ -37,7 +37,7 @@ const ManageAllUsersComponent = () => {
         { property: "job", title: "Job" },
         { property: "date_of_birth", title: "Date of Birth" },
         { property: "gender", title: "Gender" },
-        { property: "mobile_number", title: "Phone Number" },
+        { property: "phone_number", title: "Phone Number" },
         { property: "is_active", title: "Active Status", onClick: handleUserActiveToggle, toggleIcon: true },
     ];
 
