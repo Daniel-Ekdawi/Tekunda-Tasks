@@ -22,10 +22,8 @@ export const SessionProvider = ({ children }) => {
 
                 const result = await response.json()
                 
-                if (response.status == 401) throw new Error()
+                if (!response.ok || response.status == 401) throw new Error()
                 if (response.status == 403 || response.status == 404) throw new Error(result.detail)
-
-                if (!response.ok) throw new Error();
 
                 const userData = result
                 if (!userData.role) throw new Error()
