@@ -12,7 +12,7 @@ class User(Document):
     date_of_birth: date
     gender: Annotated[str, constr(min_length=1, max_length=1)]
     is_active: bool
-    mobile_number: Annotated[str, constr(min_length=10, max_length=15)]
+    phone_number: Annotated[str, constr(min_length=10, max_length=15)]
     job: str
     role: UserRole = UserRole.VIEWER
 
