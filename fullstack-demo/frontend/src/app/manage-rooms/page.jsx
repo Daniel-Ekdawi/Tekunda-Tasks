@@ -1,4 +1,4 @@
-import ManageRoomsComponent from '@/components/shared/ManageRooms/ManageRooms';
+import ManageRoomsComponent from '@/components/manage-rooms/ManageRooms';
 
 const ManageRoomsPage = () => {
     return <div className="mt-[10%]">

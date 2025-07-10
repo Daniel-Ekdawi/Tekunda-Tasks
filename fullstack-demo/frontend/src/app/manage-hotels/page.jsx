@@ -1,4 +1,4 @@
-import ManageHotelsComponent from '@/components/shared/ManageHotels/ManageHotels';
+import ManageHotelsComponent from '@/components/manage-hotels/ManageHotels';
 
 const ManageHotelsPage = () => {
     return <div className="mt-[10%]">

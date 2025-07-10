@@ -22,17 +22,16 @@ const RoomFormComponent = ({ hotel, addRoom, updateRoom, roomUpdating, setRoomUp
         setMessage({ text: 'Loading...', type: 'warning' })
 
         formData.hotel_id = hotel._id
-        const result = roomUpdating ? await updateRoomById(hotel._id, formData.id, formData) : await createRoom(formData)
+        const result = roomUpdating ? await updateRoomById(formData) : await createRoom(formData)
         setIsLoading(false)
 
         if (result?.error) return setMessage({ text: result.error || `Failed to ${roomUpdating ? 'update' : 'create'} room!`, type: 'error' }) // error
 
-        result.hotel_admin_id = hotel._id
-
+        // result.hotel_admin_id = hotel._id
         if (roomUpdating) updateRoom(result)
         else addRoom(result)
 
-        setMessage({ text: `Successfully ${roomUpdating ? 'updated' : 'created'} room ${formData["Number"]}!`, type: 'success' }) // success
+        setMessage({ text: `Successfully ${roomUpdating ? 'updated' : 'created'} room ${formData.number}!`, type: 'success' }) // success
         setFormData({})
         setRoomUpdating()
     };
@@ -45,13 +44,7 @@ const RoomFormComponent = ({ hotel, addRoom, updateRoom, roomUpdating, setRoomUp
                 setRoomUpdating()
             }
             else {
-                setFormData({
-                    "Number": roomUpdating.number,
-                    "Price": roomUpdating.price,
-                    "Description": roomUpdating.description,
-                    "Type": roomUpdating.type,
-                    id: roomUpdating._id,
-                })
+                setFormData(roomUpdating)
             }
         }
     }, [roomUpdating])
@@ -63,11 +56,11 @@ const RoomFormComponent = ({ hotel, addRoom, updateRoom, roomUpdating, setRoomUp
                 onSubmit={handleSubmit}
             >
                 <div className="text-3xl text-center mt-2 mb-4">{roomUpdating ? "Update Room" : "Create Room"}</div>
-                {ROOM_FIELDS.map(field => <InputField key={field.title} field={field} formData={formData} setFormData={setFormData} />)}
+                {ROOM_FIELDS.map(field => <InputField key={field.property} field={field} formData={formData} setFormData={setFormData} />)}
                 <GreenButton
                     text={roomUpdating ? "Update Room" : "Create Room"}
                     type="submit"
-                    disabled={isLoading || !formData || !ROOM_FIELDS.every(field => field.required ? formData[field.title]?.toString().trim() : true)}
+                    disabled={isLoading || !formData || !ROOM_FIELDS.every(field => field.required ? formData[field.property]?.toString().trim() : true)}
                 />
             </form>
         </div>

@@ -1,13 +1,14 @@
 'use client'
 
-import RoomFormComponent from "@/components/hotelAdmin/RoomForm";
-import ViewRoomComponent from "./ViewRooms"
+import RoomFormComponent from "@/components/manage-rooms/RoomForm";
+import ViewRoomComponent from "@/components/manage-rooms/ViewRooms"
 import { useSession } from '@/components/context/SessionContext';
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useNotification } from "@/components/context/NotificationContext";
 import { getHotelById } from "@/api/hotel";
 
-const ManageRoomsComponent = ({ hotelId }) => {
+const ManageRoomsComponent = ({ params }) => {
+    const { hotelId } = params ? use(params) : { hotelId: undefined }
     const [hotel, setHotel] = useState()
     const [isLoading, setIsLoading] = useState(true)
 
@@ -35,7 +36,7 @@ const ManageRoomsComponent = ({ hotelId }) => {
 
     const handleRoomUpdate = room => setRooms(oldRooms => ({ rooms: (oldRooms.rooms || []).map(currentRoom => currentRoom._id === room._id ? room : currentRoom) }));
 
-    const handleItemUpdate = item => setRoomUpdating(oldValue => (oldValue ? { reset: true } : item))
+    const handleItemUpdate = item => setRoomUpdating(oldValue => (oldValue?._id === item?._id ? { reset: true } : item))
 
     const handleItemDelete = (roomId) => deleteRoomById(hotelId, roomId)
     
