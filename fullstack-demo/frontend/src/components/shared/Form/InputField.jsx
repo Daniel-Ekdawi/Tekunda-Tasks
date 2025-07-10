@@ -1,16 +1,17 @@
 const InputField = ({ field, formData, setFormData }) => {
     if (!field) return null
+    const property = field.property
     const title = field.title
     const titleLower = title.toLowerCase()
-    const handleChange = event => setFormData(oldData => ({ ...oldData, [title]: (field.type === 'checkbox' ? event.target.checked : event.target.value) }))
+    const handleChange = event => setFormData(oldData => ({ ...oldData, [property]: (field.type === 'checkbox' ? event.target.checked : event.target.value) }))
     const defaultInputClasses = "text-black bg-gray-100 rounded-xl px-2 py-[1px] w-full"
 
     const inputComponent = <input
         className={field.classes || defaultInputClasses}
         type={field.type}
         onChange={handleChange}
-        checked={formData[title] || false}
-        value={formData[title] || ''}
+        checked={formData[property] || false}
+        value={formData[property] || ''}
         required={field.required}
         maxLength={field.maxLength || 40}
         pattern={field.pattern || ".*"}
@@ -19,7 +20,7 @@ const InputField = ({ field, formData, setFormData }) => {
     const selectComponent = <select
         className={field.classes || defaultInputClasses}
         onChange={handleChange}
-        value={formData[title] || ''}
+        value={formData[property] || ''}
         required={field.required}
     >
         <option value="" disabled>Select {titleLower}</option>
