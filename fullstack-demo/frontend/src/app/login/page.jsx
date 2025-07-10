@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useNotification } from "@/components/context/NotificationContext"
 
-import InputField from "@/components/login/InputField"
+import InputField from "@/components/shared/Form/InputField"
 import GreenButton from "@/components/buttons/GreenButton"
 
 import { login, signup } from "@/api/auth"
@@ -51,12 +51,12 @@ const LoginPage = () => {
     return (<div className="flex flex-col items-center">
         <form className="flex flex-col gap-3 bg-gray-600 p-4 rounded-xl text-white mt-[10%]" onSubmit={handleSubmit}>
             <div className="text-4xl text-center mt-2 mb-6">{loginMode ? "Login" : "Signup"}</div>
-            {loginMode && LOGIN_FIELDS.map(loginField => <InputField key={loginField} title={loginField} formData={formData} setFormData={setFormData} />)}
-            {!loginMode && SIGNUP_FIELDS.map(signupField => <InputField key={signupField} title={signupField} formData={formData} setFormData={setFormData} />)}
+            {loginMode && LOGIN_FIELDS.map(loginField => <InputField key={loginField.title} field={loginField} formData={formData} setFormData={setFormData} />)}
+            {!loginMode && SIGNUP_FIELDS.map(signupField => <InputField key={signupField.title} field={signupField} formData={formData} setFormData={setFormData} />)}
             <div className="my-2 hover:text-gray-300 hover:cursor-pointer hover:underline" onClick={() => setLoginMode(currentMode => !currentMode)}>
                 {loginMode ? "Don't have an account yet? Sign up now!" : "Already have an account? Login now!"}
             </div>
-            <GreenButton text={loginMode ? "Login" : "Signup"} disabled={isLoading || !(loginMode ? LOGIN_FIELDS : SIGNUP_FIELDS).every(field => formData[field]?.trim())} type="submit" />
+            <GreenButton text={loginMode ? "Login" : "Signup"} disabled={isLoading || !(loginMode ? LOGIN_FIELDS : SIGNUP_FIELDS).every(field => (field.required ? formData[field.title]?.trim() : true))} type="submit" />
         </form>
     </div>)
 }
