@@ -4,15 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import logo from '/public/layout/navbar/logo.png'
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import getNavbarLinks from "@/lib/getNavbarLinks";
-import { useSession } from "../context/SessionContext";
+import { useSession } from "@/components/context/SessionContext";
 
 const Navbar = () => {
     const { role, clearUser } = useSession()
     const [navbarLinks, setNavbarLinks] = useState([])
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter()
+    let pathname = usePathname()
+    if (pathname) pathname = pathname.split('/')
+    if (pathname.length > 0) pathname = pathname[1]
 
     useEffect(() => {
         const links = getNavbarLinks(role, clearUser)
@@ -41,8 +44,8 @@ const Navbar = () => {
                 {/* Navbar Links (Visible on Desktop) */}
                 <div className="hidden md:flex text-white justify-end">
                     {navbarLinks.map(link =>
-                        <span key={link.url || link.title} className="px-[0.5vw] dark:text-white hover:text-gray-200 dark:hover:text-gray-300 whitespace-nowrap hover:cursor-pointer">
-                            {link?.url && <Link href={`/${link.url}`}>{link.title}</Link>}
+                        <span key={link.url || link.title} className='px-[0.5vw] dark:text-white hover:text-gray-200 dark:hover:text-gray-300 whitespace-nowrap hover:cursor-pointer'>
+                            {link?.url && <Link className={`${pathname === link?.url ? 'font-semibold underline underline-offset-4' : ''}`} href={`/${link.url}`}>{link.title}</Link>}
                             {link?.onClick && <span onClick={link.onClick}>{link.title}</span>}
                         </span>
                     )}
