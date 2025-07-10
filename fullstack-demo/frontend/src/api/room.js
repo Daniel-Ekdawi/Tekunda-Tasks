@@ -1,42 +1,17 @@
 import { BASE_URL } from "@/constants/URLS"
+import handleAPIError from "@/api/shared/handleAPIError"
 
 const createRoom = async (roomData) => {
-    const id = roomData.hotel_id
-    const formattedData = {
-        number: roomData["Number"],
-        price: roomData["Price"],
-        description: roomData["Description"],
-        type: roomData["Type"],
-        hotel_id: id
-    }
-
     try {
-        const response = await fetch(`${BASE_URL}/hotel/${id}/room`, {
+        const response = await fetch(`${BASE_URL}/hotel/${roomData.hotel_id}/room`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(formattedData),
+            body: JSON.stringify(roomData),
         })
-
         const result = await response.json()
-
-        if (result?.detail) {
-            let errorMessage = 'An unknown error occured'
-            if (typeof result.detail === 'string') {
-                errorMessage = result.detail
-            } else if (result.detail instanceof Array) {
-                errorMessage = 'These fields are missing: \n'
-                result.detail.forEach((entry, index) => {
-                    errorMessage += `${index + 1}- ${entry.loc[1]}\n`
-                })
-            }
-            throw new Error(errorMessage)
-        }
-
-        if (response.status !== 201) throw new Error(result.detail)
-
-        if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
+        handleAPIError({ result, response }, 201)
         return result
     } catch (error) {
         return { error: error.message }
@@ -47,10 +22,7 @@ const getRoomById = async (hotelId, roomId) => {
     try {
         const response = await fetch(`${BASE_URL}/hotel/${hotelId}/room/${roomId}`)
         const result = await response.json()
-
-        if (!response.ok) throw new Error(result.detail)
-
-        if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
+        handleAPIError({ result, response })
         return result
     } catch (error) {
         return { error: error.message }
@@ -65,38 +37,24 @@ const getRooms = async (id) => {
         const url = `${BASE_URL}/hotel${id ? `/${id}/room` : `/room/all`}`
         const response = await fetch(url)
         const result = await response.json()
-
-        if (!response.ok) throw new Error(result.detail)
-
-        if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
+        handleAPIError({ result, response })
         return result
     } catch (error) {
         return { error: error.message }
     }
 }
 
-const updateRoomById = async (hotelId, roomId, updates) => {
-    const formattedData = {
-        number: updates["Number"],
-        price: updates["Price"],
-        description: updates["Description"],
-        type: updates["Type"],
-        hotel_id: hotelId,
-    }
-
+const updateRoomById = async newRoomData => {
     try {
-        const response = await fetch(`${BASE_URL}/hotel/${hotelId}/room/${roomId}`, {
+        const response = await fetch(`${BASE_URL}/hotel/${newRoomData.hotel_id}/room/${newRoomData._id}`, {
             method: 'PATCH',
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(formattedData)
+            body: JSON.stringify(newRoomData)
         })
         const result = await response.json()
-
-        if (!response.ok) throw new Error(result.detail)
-
-        if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
+        handleAPIError({ result, response })
         return result
     } catch (error) {
         return { error: error.message }
@@ -113,10 +71,7 @@ const toggleRoomPropertyById = async (hotelId, roomId, updates) => {
             body: JSON.stringify(updates)
         })
         const result = await response.json()
-
-        if (!response.ok) throw new Error(result.detail)
-
-        if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
+        handleAPIError({ result, response })
         return result
     } catch (error) {
         return { error: error.message }
@@ -127,10 +82,7 @@ const deleteRoomById = async (hotelId, roomId) => {
     try {
         const response = await fetch(`${BASE_URL}/hotel/${hotelId}/room/${roomId}`, { method: 'DELETE' })
         const result = await response.json()
-
-        if (!response.ok) throw new Error(result.detail)
-
-        if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
+        handleAPIError({ result, response })
         return result
     } catch (error) {
         return { error: error.message }

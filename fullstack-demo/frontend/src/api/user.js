@@ -1,13 +1,11 @@
 import { BASE_URL } from "@/constants/URLS"
+import handleAPIError from "@/api/shared/handleAPIError"
 
 const getUserById = async id => {
     try {
         const response = await fetch(`${BASE_URL}/user/${id}`)
         const result = await response.json()
-
-        if (!response.ok) throw new Error(result.detail)
-
-        if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
+        handleAPIError({ result, response })
         return result
     } catch (error) {
         return { error: error.message }
@@ -18,10 +16,7 @@ const getAllUsers = async () => {
     try {
         const response = await fetch(`${BASE_URL}/user`)
         const result = await response.json()
-
-        if (!response.ok) throw new Error(result.detail)
-
-        if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
+        handleAPIError({ result, response })
         return result
     } catch (error) {
         return { error: error.message }
@@ -59,10 +54,7 @@ const updateUserById = async (id, updates) => {
             body: JSON.stringify(updates)
         })
         const result = await response.json()
-
-        if (!response.ok) throw new Error(result.detail)
-
-        if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
+        handleAPIError({ result, response })
         return result
     } catch (error) {
         return { error: error.message }
@@ -73,10 +65,7 @@ const toggleUserActiveById = async id => {
     try {
         const response = await fetch(`${BASE_URL}/user/${id}/active`, { method: 'POST' })
         const result = await response.json()
-
-        if (!response.ok) throw new Error(result.detail)
-
-        if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
+        handleAPIError({ result, response })
         return result
     } catch (error) {
         return { error: error.message }
@@ -87,16 +76,11 @@ const deleteUserById = async id => {
     try {
         const response = await fetch(`${BASE_URL}/user/${id}`, { method: 'DELETE' })
         const result = await response.json()
-
-        if (!response.ok) throw new Error(result.detail)
-
-        if (!result || result.error) throw new Error(result?.error || 'An unknown error occured.')
+        handleAPIError({ result, response })
         return result
     } catch (error) {
         return { error: error.message }
     }
 }
-
-
 
 export { getUserById, getAllUsers, getAllUsersCategorized, updateUserById, toggleUserActiveById, deleteUserById }
