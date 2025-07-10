@@ -3,8 +3,8 @@ from collections import defaultdict
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException, status
 from typing import List, Optional
-from pydantic import BaseModel, EmailStr, Field
-from datetime import date
+from pydantic import BaseModel, Field
+from lib.enums import RoomType
 from models.hotel import Hotel
 from models.room import Room
 from pymongo.errors import DuplicateKeyError
@@ -13,9 +13,9 @@ router = APIRouter()
 
 class RoomUpdate(BaseModel):
     number: Optional[str] = Field(default=None)
-    price: Optional[EmailStr] = Field(default=None)
+    price: Optional[float] = Field(default=None)
     description: Optional[str] = Field(default=None)
-    type: Optional[date] = Field(default=None)
+    type: Optional[RoomType] = Field(default=None)
 
 # Create Room
 @router.post("/{hotel_id}/room", status_code=status.HTTP_201_CREATED)
@@ -112,6 +112,8 @@ async def update_room(hotel_id: str, room_id: str, room_update: RoomUpdate):
         )
 
         return updated_room
+    except DuplicateKeyError as e:
+        raise HTTPException(status_code=403, detail="Room number for this hotel already exists")
     except HTTPException as e:
         raise e    
     except Exception as e:
