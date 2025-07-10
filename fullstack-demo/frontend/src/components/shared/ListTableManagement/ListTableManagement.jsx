@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import ListTableManagementBody from "./ListTableManagementBody";
+import ListTableManagementBody from "@/components/shared/ListTableManagement/ListTableManagementBody";
 import { useSession } from "@/components/context/SessionContext";
 import { useNotification } from "@/components/context/NotificationContext";
 
@@ -17,6 +17,7 @@ const ListTableManagement = ({ tables, setTables, headers, getTablesFunction, de
     // getTablesFunction is a function that returns tables in the form { table1Title: tableData, table2Title: tableData, ... }
 
     // deleteItemFunction is a function that gets called with the object that needs to be deleted
+    // it takes the id of the item to delete
 
     // handleItemUpdate is a function that gets called when the object needs to be updated
 
@@ -54,7 +55,6 @@ const ListTableManagement = ({ tables, setTables, headers, getTablesFunction, de
             return newTablesData
         })
     }
-    console.log(tables)
     return (<>
         {isLoading && "Loading..."}
         {!isLoading && tables && Object.keys(tables).length > 0 && <div>

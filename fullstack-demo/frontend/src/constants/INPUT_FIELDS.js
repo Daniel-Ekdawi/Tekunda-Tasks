@@ -2,6 +2,7 @@ const checkboxClasses = 'w-4 h-4 accent-green-500 float-end hover:cursor-pointer
 
 const LOGIN_FIELDS = [
     {
+        property: 'email',
         title: "Email",
         required: true,
         type: 'email',
@@ -9,6 +10,7 @@ const LOGIN_FIELDS = [
         
     },
     {
+        property: 'password',
         title: "Password",
         required: true,
         type: 'password',
@@ -19,6 +21,7 @@ const LOGIN_FIELDS = [
 
 const SIGNUP_FIELDS = [
     {
+        property: 'username',
         title: "Username",
         required: true,
         type: 'text',
@@ -26,6 +29,7 @@ const SIGNUP_FIELDS = [
         
     },
     {
+        property: 'email',
         title: "Email",
         required: true,
         type: 'email',
@@ -33,6 +37,7 @@ const SIGNUP_FIELDS = [
         
     },
     {
+        property: 'password',
         title: "Password",
         required: true,
         type: 'password',
@@ -40,6 +45,7 @@ const SIGNUP_FIELDS = [
         
     },
     {
+        property: 'date_of_birth',
         title: "Date of Birth",
         required: true,
         type: 'date',
@@ -47,14 +53,17 @@ const SIGNUP_FIELDS = [
         
     },
     {
+        property: 'gender',
         title: "Gender",
         required: true,
-        type: 'text',
-        tag: 'input',
-        maxLength: 1,
-        
+        tag: 'select',
+        options: [
+            { value: 'M', title: 'Male' },
+            { value: 'F', title: 'Female' },
+        ],
     },
     {
+        property: 'phone_number',
         title: "Phone Number",
         required: true,
         type: 'tel',
@@ -63,6 +72,7 @@ const SIGNUP_FIELDS = [
         
     },
     {
+        property: 'job',
         title: "Job",
         required: true,
         type: 'text',
@@ -70,6 +80,7 @@ const SIGNUP_FIELDS = [
         
     },
     {
+        property: 'role',
         title: "Role",
         required: true,
         tag: 'select',
@@ -83,6 +94,7 @@ const SIGNUP_FIELDS = [
 
 const HOTEL_FIELDS = [
     {
+        property: 'name',
         title: "Name",
         required: true,
         type: 'text',
@@ -90,6 +102,7 @@ const HOTEL_FIELDS = [
         
     },
     {
+        property: 'phone_number',
         title: "Phone Number",
         required: true,
         type: 'tel',
@@ -98,6 +111,7 @@ const HOTEL_FIELDS = [
         
     },
     {
+        property: 'email',
         title: "Email",
         required: true,
         type: 'email',
@@ -105,6 +119,7 @@ const HOTEL_FIELDS = [
         
     },
     {
+        property: 'swimming_pools',
         title: "Swimming Pools",
         required: true,
         type: 'number',
@@ -112,6 +127,7 @@ const HOTEL_FIELDS = [
         
     },
     {
+        property: 'max_reservations',
         title: "Max Reservations",
         required: true,
         type: 'number',
@@ -119,6 +135,7 @@ const HOTEL_FIELDS = [
         
     },
     {
+        property: 'gym',
         title: "Gym",
         type: 'checkbox',
         tag: 'input',
@@ -126,6 +143,7 @@ const HOTEL_FIELDS = [
         
     },
     {
+        property: 'spa',
         title: "Spa",
         type: 'checkbox',
         tag: 'input',
@@ -133,6 +151,7 @@ const HOTEL_FIELDS = [
         
     },
     {
+        property: 'wifi',
         title: "WiFi",
         type: 'checkbox',
         tag: 'input',
@@ -140,6 +159,7 @@ const HOTEL_FIELDS = [
         
     },
     {
+        property: 'parking',
         title: "Parking",
         type: 'checkbox',
         tag: 'input',
@@ -149,24 +169,28 @@ const HOTEL_FIELDS = [
 ]
 const ROOM_FIELDS = [
     {
+        property: 'number',
         title: "Number",
         required: true,
         type: 'text',
         tag: 'input',
     },
     {
+        property: 'price',
         title: "Price",
         required: true,
         type: 'number',
         tag: 'input',
     },
     {
+        property: 'description',
         title: "Description",
         required: true,
         type: 'text',
         tag: 'input',
     },
     {
+        property: 'type',
         title: "Type",
         required: true,
         tag: 'select',

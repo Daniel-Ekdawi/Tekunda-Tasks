@@ -1,10 +1,7 @@
-import { useSession } from "@/components/context/SessionContext";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 
 const ListTableManagementBody = ({ tableTitle, tableData, headers, handleItemDelete, handleItemUpdate }) => {
-    const { user } = useSession()
-    
     return <div className="mb-6 pr-9 pl-4">
         <h2 className="font-semibold text-lg mb-2 capitalize">{tableTitle.replace('_', ' ')}</h2>
 
@@ -34,9 +31,9 @@ const ListTableManagementBody = ({ tableTitle, tableData, headers, handleItemDel
                                                 className="flex items-center justify-center w-full"
                                             >
                                                 {rowData[property] ? (
-                                                    <MdToggleOn className={`text-green-500 text-3xl transition-all ${user.role === 'hotel_admin' ? 'hover:cursor-pointer hover:text-green-700' : ''}`} />
+                                                    <MdToggleOn className={`text-green-500 text-3xl transition-all ${onClick ? 'hover:cursor-pointer hover:text-green-700' : ''}`} />
                                                 ) : (
-                                                    <MdToggleOff className={`text-gray-400 text-3xl transition-all ${user.role === 'hotel_admin' ? 'hover:cursor-pointer hover:text-gray-600' : ''}`} />
+                                                    <MdToggleOff className={`text-gray-400 text-3xl transition-all ${onClick ? 'hover:cursor-pointer hover:text-gray-600' : ''}`} />
                                                 )}
                                             </button>
                                         ) : (<>
