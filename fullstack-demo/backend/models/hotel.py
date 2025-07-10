@@ -1,7 +1,8 @@
 from beanie import Document, Indexed
 from pydantic import Field, EmailStr, constr
-from typing import Annotated, List
-# from lib.models import Rooms  
+from typing import Annotated, List, Optional
+from models.room import Room
+from models.user import User
 
 class Hotel(Document):
     name: Annotated[str, Indexed(unique=True)]
@@ -18,8 +19,9 @@ class Hotel(Document):
     max_reservations: int = 0
 
     hotel_admin_id: str
-
-    # rooms: Rooms  
+    hotel_admin: Optional[User] = Field(default=None )
+    
+    rooms: List[Room] = []
 
     class Settings:
         name = "hotels"
