@@ -15,6 +15,7 @@ const HOTEL_ADMIN_LINKS = [
 
 const SUPER_ADMIN_LINKS = [
     { title: 'Profile', url: 'profile' },
+    { title: 'Manage Rooms', url: 'manage-rooms' },
     { title: 'Manage Hotels', url: 'manage-hotels' },
     { title: 'Users', url: 'users' },
     { title: 'Logout' }

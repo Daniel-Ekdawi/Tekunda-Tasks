@@ -42,7 +42,7 @@ const Navbar = () => {
                 <div className="hidden md:flex text-white justify-end">
                     {navbarLinks.map(link =>
                         <span key={link.url || link.title} className="px-[0.5vw] dark:text-white hover:text-gray-200 dark:hover:text-gray-300 whitespace-nowrap hover:cursor-pointer">
-                            {link?.url && <Link href={link.url}>{link.title}</Link>}
+                            {link?.url && <Link href={`/${link.url}`}>{link.title}</Link>}
                             {link?.onClick && <span onClick={link.onClick}>{link.title}</span>}
                         </span>
                     )}
