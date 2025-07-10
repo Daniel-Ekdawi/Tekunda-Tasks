@@ -9,15 +9,15 @@ const VIEWER_LINKS = [
 
 const HOTEL_ADMIN_LINKS = [
     { title: 'Profile', url: 'profile' },
-    { title: 'Manage Hotels', url: 'manage-hotels' },
+    { title: 'Hotels', url: 'manage-hotels' },
     { title: 'Logout' }
 ]
 
 const SUPER_ADMIN_LINKS = [
     { title: 'Profile', url: 'profile' },
-    { title: 'Manage Rooms', url: 'manage-rooms' },
-    { title: 'Manage Hotels', url: 'manage-hotels' },
-    { title: 'Users', url: 'users' },
+    { title: 'Rooms', url: 'manage-rooms' },
+    { title: 'Hotels', url: 'manage-hotels' },
+    { title: 'Users', url: 'manage-users' },
     { title: 'Logout' }
 ]
 
