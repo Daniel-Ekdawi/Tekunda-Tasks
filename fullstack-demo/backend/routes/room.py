@@ -1,3 +1,5 @@
+from beanie.operators import In
+from collections import defaultdict
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException, status
 from typing import List, Optional
@@ -26,7 +28,7 @@ async def create_hotel(room: Room, hotel_id: str):
         
         room.hotel_id = hotel_id
         await room.insert()
-        return { "room": room.model_dump(mode="json") }
+        return room.model_dump(mode="json")
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="Room number already exists in this hotel")
     except HTTPException as e:
@@ -45,10 +47,30 @@ async def get_room(hotel_id: str):
         raise HTTPException(status_code=500, detail=str(e))    
 
 # Get All Rooms
-@router.get("/room/all", response_model=List[Room])
+@router.get("/room/all")
 async def get_all_rooms():
     try:
-        return await Room.find_all().to_list()
+        rooms = await Room.find_all().to_list()
+                
+        # group rooms by hotel
+        grouped = defaultdict(list)
+        for room in rooms:
+            grouped[room.hotel_id].append(room)
+        
+        # get hotels that has rooms
+        hotel_ids = list(grouped.keys())
+        hotel_obj_ids = [ObjectId(hid) for hid in hotel_ids]
+        hotels = await Hotel.find(In(Hotel.id, hotel_obj_ids)).to_list()
+        hotel_id_to_name = {str(hotel.id): hotel.name for hotel in hotels}
+        
+        # each room group should be categorized by the hotel name 
+        grouped_by_name = {
+            hotel_id_to_name[hotel_id]: rooms
+            for hotel_id, rooms in grouped.items()
+            if hotel_id in hotel_id_to_name
+        }
+
+        return grouped_by_name
     except HTTPException as e:
         raise e
     except Exception as e:
