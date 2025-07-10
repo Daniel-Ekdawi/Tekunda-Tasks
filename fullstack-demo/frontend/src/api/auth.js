@@ -47,13 +47,19 @@ const signup = async userData => {
             body: JSON.stringify(formattedData),
             credentials: formattedData.role === 'hotel_admin' ? "omit" : "include"
         })
-        const result = await response.json()
 
+        const result = await response.json()
+        
         if (result?.detail) {
-            let errorMessage = 'These fields are missing: \n'
-            result.detail.forEach((entry, index) => {
-                errorMessage += `${index + 1}- ${entry.loc[1]}\n`
-            })
+            let errorMessage = 'An unknown error occured'
+            if (typeof result.detail === 'string') {
+                errorMessage = result.detail
+            } else if (result.detail instanceof Array) {
+                errorMessage = 'These fields are missing: \n'
+                result.detail.forEach((entry, index) => {
+                    errorMessage += `${index + 1}- ${entry.loc[1]}\n`
+                })
+            }
             throw new Error(errorMessage)
         }
 
