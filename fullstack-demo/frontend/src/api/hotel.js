@@ -44,9 +44,24 @@ const getHotels = async (id) => {
     }
 }
 
+const getHotelIdsNames = async id => {
+    // id is the id of the hotelAdmin
+    // if no id is passed then all hotels are fetched (for super_admin)
+
+    try {
+        const url = `${BASE_URL}/hotel` + (id ? `/hotelAdmin/${id}/id` : `/id`)
+        const response = await fetch(url)
+        const result = await response.json()
+        handleAPIError({ result, response })
+        return result
+    } catch (error) {
+        return { error: error.message }
+    }
+}
+
 const updateHotelById = async newHotelData => {
     try {
-        const response = await fetch(`${BASE_URL}/hotel/${newHotelData._id}`, {
+        const response = await fetch(`${BASE_URL}/hotel/${newHotelData.id}`, {
             method: 'PATCH',
             headers: {
                 "Content-Type": "application/json"
@@ -89,4 +104,4 @@ const deleteHotelById = async id => {
     }
 }
 
-export { createHotel, getHotelById, getHotels, updateHotelById, toggleHotelPropertyById, deleteHotelById }
+export { createHotel, getHotelById, getHotels, getHotelIdsNames, updateHotelById, toggleHotelPropertyById, deleteHotelById }
