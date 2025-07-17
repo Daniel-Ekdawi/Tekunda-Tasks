@@ -13,7 +13,7 @@ const ViewHotelsComponent = ({ hotels, setHotels, handleItemDelete, handleItemUp
     const pathname = usePathname()
 
     const handleHotelPropertyToggle = async (property, hotel) => {
-        const id = hotel._id
+        const id = hotel.id
         const oldPropertyValue = hotel[property]
 
         const result = await toggleHotelPropertyById(id, property)
@@ -28,7 +28,7 @@ const ViewHotelsComponent = ({ hotels, setHotels, handleItemDelete, handleItemUp
                 const [tableTitle, tableData] = table
                 const newTableData = []
                 tableData.forEach(table => {
-                    if (table._id === id) {
+                    if (table.id === id) {
                         table[property] = newPropertyValue
                     }
                     newTableData.push(table)
@@ -39,7 +39,7 @@ const ViewHotelsComponent = ({ hotels, setHotels, handleItemDelete, handleItemUp
         })
     }
 
-    const handleHotelItemClick = hotel => router.push(`${pathname}/${hotel._id}`)
+    const handleHotelItemClick = hotel => router.push(`${pathname}/${hotel.id}`)
 
     const headers = [
         { property: "name", title: "Name", onClick: handleHotelItemClick },
@@ -51,6 +51,7 @@ const ViewHotelsComponent = ({ hotels, setHotels, handleItemDelete, handleItemUp
         { property: "spa", title: "Spa", onClick: handleHotelPropertyToggle.bind(null, 'spa'), toggleIcon: true },
         { property: "wifi", title: "Wi-Fi", onClick: handleHotelPropertyToggle.bind(null, 'wifi'), toggleIcon: true },
         { property: "parking", title: "Parking", onClick: handleHotelPropertyToggle.bind(null, 'parking'), toggleIcon: true },
+        { property: "number_of_rooms", title: "Rooms" },
         { property: "hotel_admin.username", title: "Hotel Admin" },
     ]
     // if user is not hotel admin then they shouldnt have the onClick function available

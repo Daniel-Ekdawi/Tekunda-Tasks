@@ -21,13 +21,13 @@ const RoomFormComponent = ({ hotel, addRoom, updateRoom, roomUpdating, setRoomUp
         setIsLoading(true)
         setMessage({ text: 'Loading...', type: 'warning' })
 
-        formData.hotel_id = hotel._id
+        formData.hotel_id = hotel.id
         const result = roomUpdating ? await updateRoomById(formData) : await createRoom(formData)
         setIsLoading(false)
 
         if (result?.error) return setMessage({ text: result.error || `Failed to ${roomUpdating ? 'update' : 'create'} room!`, type: 'error' }) // error
 
-        // result.hotel_admin_id = hotel._id
+        // result.hotel_admin_id = hotel.sid
         if (roomUpdating) updateRoom(result)
         else addRoom(result)
 

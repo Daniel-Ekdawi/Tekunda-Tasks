@@ -5,13 +5,13 @@ import { useSession } from "@/components/context/SessionContext"
 import ListTableManagement from "@/components/shared/ListTableManagement/ListTableManagement"
 import { useNotification } from "@/components/context/NotificationContext"
 
-const ViewRoomComponent = ({ hotel, rooms, setRooms, handleItemUpdate, handleItemDelete }) => {
+const ViewRoomsComponent = ({ hotel, rooms, setRooms, handleItemUpdate, handleItemDelete }) => {
     const { user } = useSession()
     const { setMessage } = useNotification()
 
     const handleRoomPropertyToggle = async (property, room) => {
-        const hotelId = hotel._id
-        const roomId = room._id
+        const hotelId = hotel.id
+        const roomId = room.id
         const oldPropertyValue = room[property]
 
         const result = await toggleRoomPropertyById(hotelId, roomId, property)
@@ -26,7 +26,7 @@ const ViewRoomComponent = ({ hotel, rooms, setRooms, handleItemUpdate, handleIte
                 const [tableTitle, tableData] = table
                 const newTableData = []
                 tableData.forEach(table => {
-                    if (table._id === roomId) {
+                    if (table.id === roomId) {
                         table[property] = newPropertyValue
                     }
                     newTableData.push(table)
@@ -48,12 +48,12 @@ const ViewRoomComponent = ({ hotel, rooms, setRooms, handleItemUpdate, handleIte
         .map(({ onClick, ...rest }) => user.role === "hotel_admin" ? { onClick, ...rest } : rest)
 
     const getRoomsAsObjects = async () => {
-        const rooms = await getRooms(hotel?._id)
-        if (hotel?._id) return { rooms }
+        const rooms = await getRooms(hotel?.id)
+        if (hotel?.id) return { [`${hotel.name} rooms`]: (Object.values(rooms).length > 0 ? Object.values(rooms)[0] : []) }
         return rooms
     }
     
     return <ListTableManagement tables={rooms} setTables={setRooms} headers={headers} getTablesFunction={getRoomsAsObjects} deleteItemFunction={handleItemDelete} handleItemUpdate={handleItemUpdate} />
 }
 
-export default ViewRoomComponent
+export default ViewRoomsComponent

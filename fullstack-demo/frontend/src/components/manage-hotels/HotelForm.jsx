@@ -34,7 +34,7 @@ const HotelFormComponent = ({ addHotel, updateHotel, hotelUpdating, setHotelUpda
         if (hotelUpdating) updateHotel(result)
         else addHotel(result)
 
-        setMessage({ text: `Successfully ${hotelUpdating ? 'updated' : 'created'} hotel ${formData["Name"]}!`, type: 'success' }) // success
+        setMessage({ text: `Successfully ${hotelUpdating ? 'updated' : 'created'} hotel ${formData.name}!`, type: 'success' }) // success
         setFormData({})
         setHotelUpdating()
     };

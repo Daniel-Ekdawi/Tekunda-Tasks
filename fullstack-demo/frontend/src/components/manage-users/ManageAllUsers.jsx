@@ -8,7 +8,7 @@ const ManageAllUsersComponent = () => {
     const [users, setUsers] = useState()
 
     const handleUserActiveToggle = async (user) => {
-        const id = user._id
+        const id = user.id
         const oldActiveValue = user.is_active
         const result = await toggleUserActiveById(id)
         if (!result || result.error) return setMessage({ text: 'Something went wrong...', type: 'error' })
@@ -20,7 +20,7 @@ const ManageAllUsersComponent = () => {
                 const [role, categorizedUsersGroup] = category
                 const newCategorizedUsersGroup = []
                 categorizedUsersGroup.forEach(user => {
-                    if (user._id === id) {
+                    if (user.id === id) {
                         user.is_active = newActiveValue
                     }
                     newCategorizedUsersGroup.push(user)

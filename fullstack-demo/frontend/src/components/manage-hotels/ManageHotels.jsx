@@ -13,9 +13,9 @@ const ManageHotelsComponent = () => {
 
     const handleHotelCreation = hotel => setHotels(oldHotels => ({ hotels: [...(oldHotels.hotels || []), hotel] }))
 
-    const handleHotelUpdate = hotel => setHotels(oldHotels => ({ hotels: (oldHotels.hotels || []).map(currentHotel => currentHotel._id === hotel._id ? hotel : currentHotel) }));
+    const handleHotelUpdate = hotel => setHotels(oldHotels => ({ hotels: (oldHotels.hotels || []).map(currentHotel => currentHotel.id === hotel.id ? hotel : currentHotel) }));
 
-    const handleItemUpdate = item => setHotelUpdating(oldValue => (oldValue?._id === item?._id ? { reset: true } : item))
+    const handleItemUpdate = item => setHotelUpdating(oldValue => (oldValue?.id === item?.id ? { reset: true } : item))
 
     return <div className="mb-12">
         <div className="px-[2%]"><ViewHotelsComponent hotels={hotels} setHotels={setHotels} handleItemUpdate={user.role === 'hotel_admin' ? handleItemUpdate : undefined} handleItemDelete={deleteHotelById} /></div>
