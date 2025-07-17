@@ -28,7 +28,7 @@ const Notification = () => { // message is in form { text: '', type: 'error'/'su
 
     const NotificationComponent = <div className={outerContainerClasses}>{message?.text}</div>
 
-    return (<OverlayModal isOpen={isOpen} setIsOpen={setIsOpen} orientation='items-start justify-start' translation='translate-x-2 translate-y-12' background='bg-transparent' z='40' overlayClick='pointer-events-none'>
+    return (<OverlayModal isOpen={isOpen} setIsOpen={setIsOpen} orientation='items-start justify-start' translation='translate-x-2 translate-y-12' background='bg-transparent' z='z-50' overlayClick='pointer-events-none'>
         {NotificationComponent}
     </OverlayModal>)
 }
