@@ -1,40 +1,27 @@
 from bson import ObjectId
 from fastapi import APIRouter, Body, HTTPException, status
-from typing import List, Optional
-from pydantic import BaseModel, EmailStr, Field
-from datetime import date
-from models.hotel import Hotel
+from typing import List
+from models.hotel import Hotel, HotelResponse, HotelUpdate
 from models.room import Room
 from pymongo.errors import DuplicateKeyError
 
 from models.user import User
 
 router = APIRouter()
-
-class HotelUpdate(BaseModel):
-    name: Optional[str] = Field(default=None)
-    phone_number: Optional[str] = Field(default=None, min_length=10, max_length=15)
-    email: Optional[EmailStr] = Field(default=None)
-    swimming_pools: Optional[int] = Field(default=None, ge=0)
-    max_reservations: Optional[int] = Field(default=None, ge=0)
-    gym: Optional[bool] = Field(default=None)
-    spa: Optional[bool] = Field(default=None)
-    wifi: Optional[bool] = Field(default=None)
-    parking: Optional[bool] = Field(default=None)
     
 # Create Hotel
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=Hotel)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=HotelResponse)
 async def create_hotel(hotel: Hotel):
     try:
         await hotel.insert()
-        return hotel.model_dump(mode="json")
+        return await hotel.custom_model_dump(mode="json")
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="Hotel name already exists in this hotel")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
 
 # Get Hotels of an admin
-@router.get("/hotelAdmin/{hotel_admin_id}", response_model=List[Hotel])
+@router.get("/hotelAdmin/{hotel_admin_id}", response_model=List[HotelResponse])
 async def get_hotels(hotel_admin_id: str):
     try:
         hotels = await Hotel.find(Hotel.hotel_admin_id == hotel_admin_id).to_list()
@@ -45,8 +32,8 @@ async def get_hotels(hotel_admin_id: str):
             if not admin:
                 continue
 
-            hotel_dict = hotel.model_dump(mode="json")
-            hotel_dict["hotel_admin"] = admin
+            hotel_dict = await hotel.custom_model_dump(mode="json")
+            hotel_dict["hotel_admin"] = await admin.custom_model_dump()
             populated_hotels.append(hotel_dict)
 
         return populated_hotels
@@ -55,8 +42,40 @@ async def get_hotels(hotel_admin_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
 
+# Get Hotel IDs of an admin
+@router.get("/hotelAdmin/{hotel_admin_id}/id", response_model=List[dict])
+async def get_hotel_ids(hotel_admin_id: str):
+    try:
+        col = Hotel.get_motor_collection()
+        docs = await col.find(
+            {"hotel_admin_id": hotel_admin_id},
+            {"_id": 1, "name": 1},
+        ).to_list(length=None)
+
+        return [{ "id": str(d["_id"]), "name": d["name"] } for d in docs]
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))    
+
+# Get all Hotel IDs
+@router.get("/id", response_model=List[dict])
+async def get_all_hotel_ids():
+    try:
+        col = Hotel.get_motor_collection()
+        docs = await col.find(
+            { },
+            {"_id": 1, "name": 1},
+        ).to_list(length=None)
+
+        return [{ "id": str(d["_id"]), "name": d["name"] } for d in docs]
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))       
+
 # Get All Hotels
-@router.get("/", response_model=List[Hotel])
+@router.get("/", response_model=List[HotelResponse])
 async def get_all_hotels():
     try:
         hotels = await Hotel.find_all().to_list()
@@ -66,9 +85,9 @@ async def get_all_hotels():
             admin = await User.get(hotel.hotel_admin_id)
             if not admin:
                 continue
-
-            hotel_dict = hotel.model_dump(mode="json")
-            hotel_dict["hotel_admin"] = admin
+            
+            hotel_dict = await hotel.custom_model_dump(mode="json")
+            hotel_dict["hotel_admin"] = await admin.custom_model_dump()
             populated_hotels.append(hotel_dict)
 
         return populated_hotels
@@ -78,13 +97,13 @@ async def get_all_hotels():
         raise HTTPException(status_code=500, detail=str(e))    
 
 # Get Single Hotel
-@router.get("/{hotel_id}", response_model=Hotel)
+@router.get("/{hotel_id}", response_model=HotelResponse)
 async def get_hotel(hotel_id: str):
     try:
         hotel = await Hotel.get(hotel_id)
         if not hotel:
             raise HTTPException(status_code=404, detail="Hotel not found")
-        return hotel
+        return await hotel.custom_model_dump()
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid ObjectId format")
     except HTTPException as e:
@@ -93,7 +112,7 @@ async def get_hotel(hotel_id: str):
         raise HTTPException(status_code=500, detail=str(e))    
 
 # Update a Hotel
-@router.patch("/{hotel_id}", response_model=Hotel)
+@router.patch("/{hotel_id}", response_model=HotelResponse)
 async def update_hotel(hotel_id: str, hotel_update: HotelUpdate):
     try:
         hotel_data = hotel_update.model_dump(exclude_unset=True)
@@ -107,7 +126,7 @@ async def update_hotel(hotel_id: str, hotel_update: HotelUpdate):
         if not updated_hotel:
             raise HTTPException(status_code=404, detail="Hotel not found")
 
-        return updated_hotel
+        return await updated_hotel.custom_model_dump()
 
     except HTTPException as e:
         raise e    
@@ -136,7 +155,7 @@ async def toggle_user_active(hotel_id: str, hotel_update_property: str = Body(..
         raise HTTPException(status_code=500, detail=str(e))    
     
 # Delete a Hotel
-@router.delete("/{hotel_id}", response_model=Hotel)
+@router.delete("/{hotel_id}", response_model=HotelResponse)
 async def delete_hotel(hotel_id: str):
     try:
         hotel = await Hotel.get(hotel_id)
@@ -147,7 +166,7 @@ async def delete_hotel(hotel_id: str):
         await Room.find(Room.hotel_id == hotel_id).delete()
 
         await hotel.delete()
-        return hotel
+        return await hotel.custom_model_dump()
     except HTTPException as e:
         raise e    
     except Exception as e:

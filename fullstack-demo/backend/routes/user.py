@@ -1,30 +1,23 @@
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException, status
-from typing import List, Optional
+from typing import List
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr
 from datetime import date, timedelta
 from pymongo.errors import DuplicateKeyError
-from models.user import User
+from models.user import User, UserResponse, UserUpdate
 from lib.hashing_password import verify_password, hash_password
 from lib.jwt_handler import create_access_token
 
 router = APIRouter()
 
-class UserUpdate(BaseModel):
-    username: Optional[str] = Field(default=None)
-    email: Optional[EmailStr] = Field(default=None)
-    password: Optional[str] = Field(default=None)
-    date_of_birth: Optional[date] = Field(default=None)
-    gender: Optional[str] = Field(default=None, min_length=1, max_length=1)
-
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
-def create_response_with_token(user, status_code = 200):
+async def create_response_with_token(user, status_code = 200):
     token = create_access_token({"sub": str(user.id)}, expires_delta=timedelta(minutes=60))
-    response = JSONResponse(content={"user": user.model_dump(exclude={"password"}, mode="json")}, status_code=status_code)
+    response = JSONResponse(content={"user": await user.custom_model_dump(exclude={"password"}, mode="json")}, status_code=status_code)
     response.set_cookie(
         key="token",
         value=token,
@@ -36,13 +29,13 @@ def create_response_with_token(user, status_code = 200):
     return response
 
 # Create User
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserResponse)
 async def create_user(user: User):
     try:
         hashed_pwd = hash_password(user.password)
         user.password = hashed_pwd
         await user.insert()
-        return create_response_with_token(user, status_code=201)
+        return await create_response_with_token(user, status_code=201)
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="Username or email already exists")
     except Exception as e:
@@ -59,7 +52,7 @@ async def login_user(login: LoginRequest):
         if not user.is_active:
             raise HTTPException(status_code=401, detail="User not active")
 
-        return create_response_with_token(user)
+        return await create_response_with_token(user)
     except HTTPException as e:
         raise e
     except Exception as e:
@@ -94,33 +87,34 @@ async def toggle_user_active(user_id: str):
         raise HTTPException(status_code=500, detail=str(e))    
 
 # Get All Users
-@router.get("/", response_model=List[User])
+@router.get("/", response_model=List[UserResponse])
 async def get_users():
     try:
-        return await User.find_all().to_list()
+        users = await User.find_all().to_list()
+        return [await user.custom_model_dump() for user in users]
     except HTTPException as e:
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
 
 # Get Single User
-@router.get("/{user_id}", response_model=User)
+@router.get("/{user_id}", response_model=UserResponse)
 async def get_user(user_id: str):
     try:
         user = await User.get(user_id)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-        return user
+        return await user.custom_model_dump()
     except HTTPException as e:
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
 
 # Update a User
-@router.patch("/{user_id}", response_model=User)
+@router.patch("/{user_id}", response_model=UserResponse)
 async def update_user(user_id: str, user_update: UserUpdate):
     try:
-        user_data = user_update.model_dump(exclude_unset=True)
+        user_data = user_update.custom_model_dump(exclude_unset=True)
         user_oid = ObjectId(user_id)
 
         updated_user = await User.find_one(User.id == user_oid).update(
@@ -131,7 +125,7 @@ async def update_user(user_id: str, user_update: UserUpdate):
         if not updated_user:
             raise HTTPException(status_code=404, detail="User not found")
 
-        return updated_user
+        return await updated_user.custom_model_dump()
 
     except HTTPException as e:
         raise e    
@@ -142,7 +136,7 @@ async def update_user(user_id: str, user_update: UserUpdate):
     
     
 # Delete a User
-@router.delete("/{user_id}", response_model=User)
+@router.delete("/{user_id}", response_model=UserResponse)
 async def delete_user(user_id: str):
     try:
         user = await User.get(user_id)
@@ -150,7 +144,7 @@ async def delete_user(user_id: str):
             raise HTTPException(status_code=404, detail="User not found")
         
         await user.delete()
-        return user
+        return await user.custom_model_dump()
     except HTTPException as e:
         raise e    
     except Exception as e:
