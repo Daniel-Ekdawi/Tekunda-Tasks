@@ -1,8 +1,8 @@
 const InputField = ({ field, formData, setFormData }) => {
     if (!field) return null
     const property = field.property
-    const title = field.title
-    const titleLower = title.toLowerCase()
+    const { title, showLabel = true } = field
+    const titleLower = title?.toLowerCase()
     const handleChange = event => setFormData(oldData => ({ ...oldData, [property]: (field.type === 'checkbox' ? event.target.checked : event.target.value) }))
     const defaultInputClasses = "text-black bg-gray-100 rounded-xl px-2 py-[1px] w-full"
 
@@ -28,8 +28,8 @@ const InputField = ({ field, formData, setFormData }) => {
     </select>
 
     return <div className="flex items-center gap-3 justify-between">
-        <div className="w-[35%]">{title}</div>
-        <div className="w-[60%]">
+        {showLabel && <div className="w-[35%]">{title}</div>}
+        <div className={showLabel ? 'w-[60%]' : 'w-full'}>
             {field.tag === 'select' && selectComponent}
             {field.tag === 'input' && inputComponent}
         </div>
