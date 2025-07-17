@@ -1,7 +1,9 @@
 import "./globals.css";
 
 import Notification from "@/components/layout/Notification";
+import Popup from "@/components/layout/Popup";
 import { NotificationProvider } from '@/components/context/NotificationContext';
+import { PopupProvider } from '@/components/context/PopupContext';
 import { SessionProvider } from '@/components/context/SessionContext';
 import Navbar from "@/components/layout/Navbar";
 
@@ -15,11 +17,14 @@ export default function RootLayout({ children }) {
         <html lang="en">
             <body className={`antialiased`}>
                 <NotificationProvider>
-                    <SessionProvider>
-                        <Navbar />
-                        <Notification />
-                        {children}
-                    </SessionProvider>
+                    <PopupProvider>
+                        <SessionProvider>
+                            <Navbar />
+                            <Notification />
+                            <Popup />
+                            {children}
+                        </SessionProvider>
+                    </PopupProvider>
                 </NotificationProvider>
             </body>
         </html>
