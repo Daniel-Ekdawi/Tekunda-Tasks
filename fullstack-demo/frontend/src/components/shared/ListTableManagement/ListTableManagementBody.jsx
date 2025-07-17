@@ -1,8 +1,18 @@
+import BlueButton from "@/components/buttons/BlueButton";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { MdToggleOn, MdToggleOff } from "react-icons/md";
 
-const ListTableManagementBody = ({ tableTitle, tableData, headers, handleItemDelete, handleItemUpdate }) => {
-    return <div className="mb-6 pr-9 pl-4">
+const ListTableManagementBody = ({ tableTitle, tableData, headers, buttons, handleItemDelete, handleItemUpdate }) => {
+    const width =
+        (handleItemDelete || handleItemUpdate ? 2 : 0) +
+        ((buttons?.length ? buttons.length : 0))
+        * 10
+    const widthPercentage = width ? width + 2 : 0
+    const widthOfContainer = 100 - widthPercentage
+    
+    if (tableData && tableData.length === 0) return <div className="flex justify-center">Table '{tableTitle}' is empty...</div>
+
+    return <div className={`mb-6 pr-[1%] pl-[1%]`} style={{ width: `${widthOfContainer}%` }}>
         <h2 className="font-semibold text-lg mb-2 capitalize">{tableTitle.replace('_', ' ')}</h2>
 
         {/* Table header */}
@@ -15,11 +25,11 @@ const ListTableManagementBody = ({ tableTitle, tableData, headers, handleItemDel
                 </tr>
             </thead>
         </table>
-                    
+
         {/* Table rows with delete button outside */}
         <div className="space-y-1">
             {tableData.map((rowData, idx) => (
-                <div key={idx} className="relative flex items-center break-words">
+                <div key={idx} className="relative z-0 flex items-center break-words">
                     <table className="w-full text-sm table-fixed">
                         <tbody>
                             <tr className="text-center">
@@ -53,7 +63,11 @@ const ListTableManagementBody = ({ tableTitle, tableData, headers, handleItemDel
                     </table>
 
                     {/* Delete icon */}
-                    <div className="absolute flex flex-col left-full ml-2">
+                    <div className="absolute flex flex-col left-full ml-4" style={{ width: `${width}vw` }}>
+                        {buttons && <div className="flex flex-row gap-3">
+                            {buttons.map(button => <BlueButton key={button.title} text={button.title} onClick={button.onClick.bind(null, rowData)} extraClasses="text-white text-nowrap overflow-hidden text-[8px] md:text-[11px] lg:text-[14px]" />)}
+                        </div>}
+
                         {handleItemUpdate && <button onClick={() => handleItemUpdate(rowData)}>
                             <FaEdit className="mx-0.5 text-lg transition-all hover:shadow-2xl hover:cursor-pointer text-blue-500 hover:text-blue-700" />
                         </button>}

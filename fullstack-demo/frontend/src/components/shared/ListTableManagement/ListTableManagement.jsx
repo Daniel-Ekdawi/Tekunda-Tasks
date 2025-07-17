@@ -5,7 +5,7 @@ import ListTableManagementBody from "@/components/shared/ListTableManagement/Lis
 import { useSession } from "@/components/context/SessionContext";
 import { useNotification } from "@/components/context/NotificationContext";
 
-const ListTableManagement = ({ tables, setTables, headers, getTablesFunction, deleteItemFunction, handleItemUpdate }) => {
+const ListTableManagement = ({ tables, setTables, headers, buttons, getTablesFunction, getTablesFunctionDependencies = [], deleteItemFunction, handleItemUpdate }) => {
     // tables and setTables are useState variables
 
     // headers is an array of objects { property, title } 
@@ -14,7 +14,10 @@ const ListTableManagement = ({ tables, setTables, headers, getTablesFunction, de
     // (optional) onClick: function that gets triggered when the property is clicked
     // (optional) toggleIcon: a boolean value, if true then the property is viewed as a toggle button instead of True / False
 
+    // buttons is an array of objects { title, onClick }
+
     // getTablesFunction is a function that returns tables in the form { table1Title: tableData, table2Title: tableData, ... }
+    // getTablesFunctionDependencies is a dependency array for the getTablesFunction useEffect
 
     // deleteItemFunction is a function that gets called with the object that needs to be deleted
     // it takes the id of the item to delete
@@ -34,11 +37,12 @@ const ListTableManagement = ({ tables, setTables, headers, getTablesFunction, de
             setTables(result)
         }
 
-        getTables()
-    }, [])
+        if (getTablesFunction) getTables()
+        else setIsLoading(false)
+    }, getTablesFunctionDependencies)
 
     const handleItemDelete = async item => {
-        const id = item._id
+        const id = item.id
         if (user.id === id) return setMessage({ text: 'Cannot delete own account', type: 'error' }) // for deleting user self account
         const result = await deleteItemFunction(id)
         if (!result || result.error) return setMessage({ text: 'Something went wrong...', type: 'error' })
@@ -48,17 +52,19 @@ const ListTableManagement = ({ tables, setTables, headers, getTablesFunction, de
                 const [tableTitle, tableData] = table
                 const newTableData = []
                 tableData.forEach(table => {
-                    if (table._id !== id) newTableData.push(table)
+                    if (table.id !== id) newTableData.push(table)
                 })
                 newTablesData[tableTitle] = newTableData
             })
+            setMessage({ text: `Successfully deleted ${result.name || (result.username ? `user ${result.username}` : undefined) || (result.number ? `room ${result.number}` : undefined)}!`, type: 'success' })
             return newTablesData
         })
     }
+
     return (<>
         {isLoading && "Loading..."}
         {!isLoading && tables && Object.keys(tables).length > 0 && <div>
-            {tables && Object.entries(tables).map(([tableTitle, tableData]) => <ListTableManagementBody key={tableTitle} tableTitle={tableTitle} tableData={tableData} headers={headers} handleItemDelete={deleteItemFunction ? handleItemDelete : undefined} handleItemUpdate={handleItemUpdate} />)}
+            {tables && Object.entries(tables).map(([tableTitle, tableData]) => <ListTableManagementBody key={tableTitle} tableTitle={tableTitle} tableData={tableData} headers={headers} buttons={buttons} handleItemDelete={deleteItemFunction ? handleItemDelete : undefined} handleItemUpdate={handleItemUpdate} />)}
         </div>}
         {!isLoading && tables && Object.keys(tables).length === 0 && "There is no data..."}
     </>)
