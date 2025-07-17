@@ -1,6 +1,6 @@
-const OverlayModal = ({ children, isOpen, setIsOpen, orientation = 'items-center justify-center', translation = '', background = 'bg-black bg-opacity-50', z = '30', overlayClick = '' }) => {
-    const outerContainerClasses = 'fixed inset-0 flex flex-col p-4 ' + orientation + ' ' + background + ' z-' + z  + ' ' + overlayClick
-    const innerContainerClasses = 'flex flex-col items-end pointer-events-auto ' + translation
+const OverlayModal = ({ children, isOpen, setIsOpen, orientation = 'items-center justify-center', translation = '', background = 'bg-black bg-opacity-50', z = 'z-30', overlayClick = '' }) => {
+    const outerContainerClasses = `fixed isolate inset-0 flex flex-col p-4 ${orientation} ${background} ${z} ${overlayClick}`
+    const innerContainerClasses = `flex flex-col items-end pointer-events-auto ${translation}`
     const closeButtonClasses = 'translate-y-8 -translate-x-4 text-gray-500 hover:text-gray-700'
 
     const handleClose = () => setIsOpen(false)
