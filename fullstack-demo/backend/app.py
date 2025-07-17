@@ -4,6 +4,7 @@ from routes.auth import router as auth_router
 from routes.user import router as user_router
 from routes.hotel import router as hotel_router
 from routes.room import router as room_router
+from routes.reservation import router as reservation_router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -22,5 +23,6 @@ async def start_db():
 
 app.include_router(auth_router, prefix="/auth")
 app.include_router(user_router, prefix="/user")
-app.include_router(hotel_router, prefix="/hotel")
 app.include_router(room_router, prefix="/hotel")
+app.include_router(hotel_router, prefix="/hotel")
+app.include_router(reservation_router, prefix="/reservation")

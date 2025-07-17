@@ -8,3 +8,8 @@ class UserRole(str, Enum):
 class RoomType(str, Enum):
     SINGLE = "single"
     DOUBLE = "double"
+
+class ReservationStatus(str, Enum):
+    PENDING = "pending"
+    PAID = "paid"
+    CANCELLED = "cancelled"
