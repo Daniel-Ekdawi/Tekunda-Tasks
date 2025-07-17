@@ -34,7 +34,20 @@ const getRooms = async (id) => {
     // if no id is passed then all rooms are fetched (for super_admin)
 
     try {
-        const url = `${BASE_URL}/hotel${id ? `/${id}/room` : `/room/all`}`
+        const url = `${BASE_URL}/hotel/${id ? `${id}` : `all`}/room`
+        const response = await fetch(url)
+        const result = await response.json()
+        handleAPIError({ result, response })
+        return result
+    } catch (error) {
+        return { error: error.message }
+    }
+}
+
+const getFilteredRooms = async (filters) => {
+    const params = new URLSearchParams(filters)
+    try {
+        const url = `${BASE_URL}/hotel/all/room?${params.toString()}`
         const response = await fetch(url)
         const result = await response.json()
         handleAPIError({ result, response })
@@ -46,7 +59,7 @@ const getRooms = async (id) => {
 
 const updateRoomById = async newRoomData => {
     try {
-        const response = await fetch(`${BASE_URL}/hotel/${newRoomData.hotel_id}/room/${newRoomData._id}`, {
+        const response = await fetch(`${BASE_URL}/hotel/${newRoomData.hotel_id}/room/${newRoomData.id}`, {
             method: 'PATCH',
             headers: {
                 "Content-Type": "application/json"
@@ -89,4 +102,4 @@ const deleteRoomById = async (hotelId, roomId) => {
     }
 }
 
-export { createRoom, getRoomById, getRooms, updateRoomById, toggleRoomPropertyById, deleteRoomById }
+export { createRoom, getRoomById, getRooms, getFilteredRooms, updateRoomById, toggleRoomPropertyById, deleteRoomById }
