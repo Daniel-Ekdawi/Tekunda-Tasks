@@ -1,13 +1,10 @@
-import asyncio
 from datetime import date
-from beanie.operators import In
-from collections import defaultdict
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException, Query, status
-from typing import List, Optional
-from lib.enums import RoomType
-from lib.room_hotel_service import group_rooms_by_hotel_name
-from lib.room_reservation_service import get_all_available_rooms, get_all_available_rooms_in_hotel, get_all_unavailable_rooms, get_all_unavailable_rooms_in_hotel
+from typing import Optional
+from enums import RoomType
+from services.room.group_rooms_by_hotel_name import group_rooms_by_hotel_name
+from services.room.get_rooms_helpers import get_all_available_rooms
 from models.hotel import Hotel
 from models.room import Room, RoomResponse, RoomUpdate, RoomsGroupedByHotelResponse
 from pymongo.errors import DuplicateKeyError
@@ -33,7 +30,7 @@ async def create_hotel(room: Room, hotel_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
     
-# Get rooms
+# Gets all rooms or available filtered rooms
 @router.get("/all/room", response_model=RoomsGroupedByHotelResponse)
 async def get_all_rooms(
     start_date: Optional[date] = Query(None),
@@ -81,56 +78,6 @@ async def get_all_rooms_for_hotel(hotel_id: str):
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
-
-# # Get available rooms
-# @router.get("/all/room/available", response_model=RoomsGroupedByHotelResponse)
-# async def get_available_rooms_all(
-#     start_date: date = Query(...),
-#     end_date: date = Query(...)
-# ):
-#     try:
-#         rooms = await get_all_available_rooms(start_date, end_date)
-#         return await group_rooms_by_hotel_name(rooms)
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-    
-# # Get unavailable rooms
-# @router.get("/all/room/unavailable", response_model=RoomsGroupedByHotelResponse)
-# async def get_unavailable_rooms_all(
-#     start_date: date = Query(...),
-#     end_date: date = Query(...)
-# ):
-#     try: 
-#         rooms = await get_all_unavailable_rooms(start_date, end_date)
-#         return await group_rooms_by_hotel_name(rooms)
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-    
-# # Get available rooms in a certain hotel
-# @router.get("/{hotel_id}/room/available", response_model=RoomsGroupedByHotelResponse)
-# async def get_available_rooms_in_hotel(
-#     hotel_id: str,
-#     start_date: date = Query(...),
-#     end_date: date = Query(...)
-# ):
-#     try:
-#         rooms = await get_all_available_rooms_in_hotel(hotel_id, start_date, end_date)
-#         return await group_rooms_by_hotel_name(rooms)
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-    
-# # Get unavailable rooms in a certain hotel
-# @router.get("/{hotel_id}/room/unavailable", response_model=RoomsGroupedByHotelResponse)
-# async def get_unavailable_rooms_in_hotel(
-#     hotel_id: str,
-#     start_date: date = Query(...),
-#     end_date: date = Query(...)
-# ):
-#     try:
-#         rooms = await get_all_unavailable_rooms_in_hotel(hotel_id, start_date, end_date)
-#         return await group_rooms_by_hotel_name(rooms)
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
 
 # Get single room
 @router.get("/{hotel_id}/room/{room_id}", response_model=RoomResponse)

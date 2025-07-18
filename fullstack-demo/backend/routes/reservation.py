@@ -1,9 +1,7 @@
-import asyncio
 from fastapi import APIRouter, HTTPException, status
-from datetime import date
-from typing import List
+from typing import List, Literal, Optional, Union
 
-from lib.room_reservation_service import populate_reservation
+from services.reservation.get_reservations_options import get_reservations_options
 from models.reservation import GroupedReservations, Reservation, ReservationCreate, ReservationResponse
 from models.room import Room
 from models.hotel import Hotel
@@ -35,12 +33,10 @@ async def create_reservation(data: ReservationCreate):
         conflict = await Reservation.find({
             "room_id": data.room_id,
             "status": {"$ne": "cancelled"},
-            "$or": [
-                {
-                    "start_date": {"$lt": data.end_date},
-                    "end_date": {"$gt": data.start_date}
-                }
-            ]
+            "$or": [{
+                "start_date": {"$lt": data.end_date},
+                "end_date": {"$gt": data.start_date}
+            }]
         }).to_list()
 
         if conflict:
@@ -76,269 +72,41 @@ async def cancel_reservation(reservation_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-
-# get all reservations for a hotel
-@router.get("/hotel/{hotel_id}", response_model=List[ReservationResponse])
-async def get_all_reservations_for_hotel(hotel_id: str):
+# get reservations for a hotel
+# options: grouped / ongoing / past / future / None
+@router.get("/hotel/{hotel_id}", response_model=Union[List[ReservationResponse], GroupedReservations])
+async def get_all_reservations_for_hotel(hotel_id: str, options: Optional[Literal["grouped", "ongoing", "past", "future"]] = None):
     try:
-        reservations = await Reservation.find({"hotel_id": hotel_id}).to_list()
-        return await asyncio.gather(*[populate_reservation(r) for r in reservations])
+        query = {"hotel_id": hotel_id}
+        return await get_reservations_options(query, options)
     except HTTPException as e:
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# get grouped reservations for a hotel
-@router.get("/hotel/{hotel_id}/grouped", response_model=GroupedReservations)
-async def get_grouped_reservations_for_hotel(hotel_id: str):
+# get reservations for a room in a hotel
+# options: grouped / ongoing / past / future / None
+@router.get("/hotel/{hotel_id}/room/{room_id}", response_model=Union[List[ReservationResponse], GroupedReservations])
+async def get_all_reservations_for_hotel(hotel_id: str, room_id: str, options: Optional[Literal["grouped", "ongoing", "past", "future"]] = None):
     try:
-        today = date.today()
-        all_reservations = await Reservation.find({"hotel_id": hotel_id}).to_list()
-        populated_reservations = await asyncio.gather(*[populate_reservation(r) for r in all_reservations])
-
-        past = []
-        ongoing = []
-        future = []
-
-        for res in populated_reservations:
-            if res["end_date"] < today:
-                past.append(res)
-            elif res["start_date"] > today:
-                future.append(res)
-            else:
-                ongoing.append(res)
-
-        return GroupedReservations(past=past, ongoing=ongoing, future=future)
+        query = {"hotel_id": hotel_id, "room_id": room_id}
+        return await get_reservations_options(query, options)
     except HTTPException as e:
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# get ongoing reservations for a hotel
-@router.get("/hotel/{hotel_id}/ongoing", response_model=List[ReservationResponse])
-async def get_ongoing_reservations_for_hotel(hotel_id: str):
+# get reservations by user
+# options: grouped / ongoing / past / future / None
+@router.get("/user/{user_id}", response_model=Union[List[ReservationResponse], GroupedReservations])
+async def get_all_reservations_for_hotel(user_id: str, options: Optional[Literal["grouped", "ongoing", "past", "future"]] = None):
     try:
-        today = date.today()
-        reservations = await Reservation.find({
-            "hotel_id": hotel_id,
-            "start_date": {"$lte": today},
-            "end_date": {"$gte": today}
-        }).to_list()
-        return await asyncio.gather(*[populate_reservation(r) for r in reservations])
+        query = {"user_id": user_id}
+        return await get_reservations_options(query, options)
     except HTTPException as e:
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-# get past reservations for a hotel
-@router.get("/hotel/{hotel_id}/past", response_model=List[ReservationResponse])
-async def get_past_reservations_for_hotel(hotel_id: str):
-    try:
-        today = date.today()
-        reservations = await Reservation.find({
-            "hotel_id": hotel_id,
-            "end_date": {"$lt": today}
-        }).to_list()
-        return await asyncio.gather(*[populate_reservation(r) for r in reservations])
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# get future reservations for a hotel
-@router.get("/hotel/{hotel_id}/future", response_model=List[ReservationResponse])
-async def get_future_reservations_for_hotel(hotel_id: str):
-    try:
-        today = date.today()
-        reservations = await Reservation.find({
-            "hotel_id": hotel_id,
-            "start_date": {"$gt": today}
-        }).to_list()
-        return await asyncio.gather(*[populate_reservation(r) for r in reservations])
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    
-
-
-# get all reservations for a room in a hotel
-@router.get("/hotel/{hotel_id}/room/{room_id}", response_model=List[ReservationResponse])
-async def get_all_reservations_for_room(hotel_id: str, room_id: str):
-    try:
-        reservations = await Reservation.find({
-            "hotel_id": hotel_id,
-            "room_id": room_id
-        }).to_list()
-        return await asyncio.gather(*[populate_reservation(r) for r in reservations])
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# get grouped reservations for a room in a hotel
-@router.get("/hotel/{hotel_id}/room/{room_id}/grouped", response_model=GroupedReservations)
-async def get_grouped_reservations_for_room(hotel_id: str, room_id: str):
-    try:
-        today = date.today()
-        all_reservations = await Reservation.find({
-            "hotel_id": hotel_id,
-            "room_id": room_id
-        }).to_list()
-        populated_reservations = await asyncio.gather(*[populate_reservation(r) for r in all_reservations])
-
-        past = []
-        ongoing = []
-        future = []
-
-        for res in populated_reservations:
-            if res["end_date"] < today:
-                past.append(res)
-            elif res["start_date"] > today:
-                future.append(res)
-            else:
-                ongoing.append(res)
-
-        return GroupedReservations(past=past, ongoing=ongoing, future=future)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-        
-# get ongoing reservations for a room in a hotel
-@router.get("/hotel/{hotel_id}/room/{room_id}/ongoing", response_model=List[ReservationResponse])
-async def get_ongoing_reservations_for_room(hotel_id: str, room_id: str):
-    try:
-        today = date.today()
-        return await Reservation.find({
-            "hotel_id": hotel_id,
-            "room_id": room_id,
-            "start_date": {"$lte": today},
-            "end_date": {"$gte": today}
-        }).to_list()
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# get past reservations for a room in a hotel
-@router.get("/hotel/{hotel_id}/room/{room_id}/past", response_model=List[ReservationResponse])
-async def get_past_reservations_for_room(hotel_id: str, room_id: str):
-    try:
-        today = date.today()
-        reservations = await Reservation.find({
-            "hotel_id": hotel_id,
-            "room_id": room_id,
-            "end_date": {"$lt": today}
-        }).to_list()
-        return await asyncio.gather(*[populate_reservation(r) for r in reservations])
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    
-# get future reservations for a room in a hotel
-@router.get("/hotel/{hotel_id}/room/{room_id}/future", response_model=List[ReservationResponse])
-async def get_future_reservations_for_room(hotel_id: str, room_id: str):
-    try:
-        today = date.today()
-        reservations = await Reservation.find({
-            "hotel_id": hotel_id,
-            "room_id": room_id,
-            "start_date": {"$gt": today}
-        }).to_list()
-        return await asyncio.gather(*[populate_reservation(r) for r in reservations])
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# get all reservations by user
-@router.get("/user/{user_id}", response_model=List[ReservationResponse])
-async def get_all_reservations_by_user(user_id: str):
-    try:
-        reservations = await Reservation.find({"user_id": user_id}).to_list()
-        return await asyncio.gather(*[populate_reservation(r) for r in reservations])
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# get all reservations by user grouped
-@router.get("/user/{user_id}/grouped", response_model=GroupedReservations)
-async def get_all_reservations_by_user_grouped(user_id: str):
-    try:
-        today = date.today()
-        all_reservations = await Reservation.find({"user_id": user_id}).to_list()
-        populated_reservations = await asyncio.gather(*[populate_reservation(r) for r in all_reservations])
-
-        past = []
-        ongoing = []
-        future = []
-
-        for res in populated_reservations:
-            if res["end_date"] < today:
-                past.append(res)
-            elif res["start_date"] > today:
-                future.append(res)
-            else:
-                ongoing.append(res)
-
-        return GroupedReservations(past=past, ongoing=ongoing, future=future)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    
-# get ongoing reservations by user
-@router.get("/user/{user_id}/ongoing", response_model=List[ReservationResponse])
-async def get_ongoing_reservations_by_user(user_id: str):
-    try:
-        today = date.today()
-        reservations = await Reservation.find({
-            "user_id": user_id,
-            "start_date": {"$lte": today},
-            "end_date": {"$gte": today}
-        }).to_list()
-        return await asyncio.gather(*[populate_reservation(r) for r in reservations])
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# get past reservations by user
-@router.get("/user/{user_id}/past", response_model=List[ReservationResponse])
-async def get_past_reservations_by_user(user_id: str):
-    try:
-        today = date.today()
-        reservations = await Reservation.find({
-            "user_id": user_id,
-            "end_date": {"$lt": today}
-        }).to_list()
-        return await asyncio.gather(*[populate_reservation(r) for r in reservations])
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# get future reservations by user
-@router.get("/user/{user_id}/future", response_model=List[ReservationResponse])
-async def get_future_reservations_by_user(user_id: str):
-    try:
-        today = date.today()
-        reservations = await Reservation.find({
-            "user_id": user_id,
-            "start_date": {"$gt": today}
-        }).to_list()
-        return await asyncio.gather(*[populate_reservation(r) for r in reservations])
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 # delete a reservation by id
 @router.delete("/{reservation_id}", response_model=ReservationResponse)
