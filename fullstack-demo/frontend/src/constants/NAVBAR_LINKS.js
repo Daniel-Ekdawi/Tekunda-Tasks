@@ -1,5 +1,6 @@
 const GUEST_LINKS = [
-    { title: 'Login', url: 'login' }
+    { title: 'Login', url: 'login' },
+    { title: 'Book Now', url: 'booking' },
 ]
 
 const VIEWER_LINKS = [
