@@ -30,8 +30,9 @@ const cancelReservationById = async reservationId => {
 }
 
 const getReservationsForHotel = async (hotelId, options = 'grouped') => {
+    const params = new URLSearchParams({ options })
     try {
-        const response = await fetch(`${BASE_URL}/reservation/hotel/${hotelId}/${options}`)
+        const response = await fetch(`${BASE_URL}/reservation/hotel/${hotelId}?${params.toString()}`)
         const result = await response.json()
         handleAPIError({ result, response })
         return result
@@ -41,8 +42,9 @@ const getReservationsForHotel = async (hotelId, options = 'grouped') => {
 }
 
 const getReservationsForRoom = async (roomId, hotelId, options = 'grouped') => {
+    const params = new URLSearchParams({ options })
     try {
-        const response = await fetch(`${BASE_URL}/reservation/hotel/${hotelId}/room/${roomId}/${options}`)
+        const response = await fetch(`${BASE_URL}/reservation/hotel/${hotelId}/room/${roomId}?${params.toString()}`)
         const result = await response.json()
         handleAPIError({ result, response })
         return result
@@ -52,8 +54,9 @@ const getReservationsForRoom = async (roomId, hotelId, options = 'grouped') => {
 }
 
 const getReservationsByUser = async (userId, options = 'grouped') => {
+    const params = new URLSearchParams({ options })
     try {
-        const response = await fetch(`${BASE_URL}/reservation/user/${userId}/${options}`)
+        const response = await fetch(`${BASE_URL}/reservation/user/${userId}?${params.toString()}`)
         const result = await response.json()
         handleAPIError({ result, response })
         return result
