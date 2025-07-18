@@ -42,7 +42,7 @@ async def get_hotels(hotel_admin_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
 
-# Get Hotel IDs of an admin
+# Get Hotel IDs and Names of an admin
 @router.get("/hotelAdmin/{hotel_admin_id}/id", response_model=List[dict])
 async def get_hotel_ids(hotel_admin_id: str):
     try:
@@ -58,7 +58,7 @@ async def get_hotel_ids(hotel_admin_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
 
-# Get all Hotel IDs
+# Get all Hotel IDs and Names
 @router.get("/id", response_model=List[dict])
 async def get_all_hotel_ids():
     try:

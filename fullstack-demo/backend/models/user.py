@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, EmailStr, constr, model_validator
 from datetime import date
 from typing import Annotated, Optional
 
-from lib.enums import UserRole
+from enums import UserRole
 
 class User(Document):
     username: Annotated[str, Indexed(unique=True)]

@@ -3,7 +3,7 @@ from beanie import Document
 from pydantic import BaseModel, Field, RootModel
 from pymongo import IndexModel
 
-from lib.enums import RoomType
+from enums import RoomType
 
 class Room(Document):
     number: str

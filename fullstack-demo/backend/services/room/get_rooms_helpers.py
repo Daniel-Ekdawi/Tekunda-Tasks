@@ -3,19 +3,10 @@ from typing import List
 
 from bson import ObjectId
 
-from models.user import User
 from models.hotel import Hotel
-from models.room import Room, RoomResponse
+from models.room import Room
 from models.reservation import Reservation
 from beanie.operators import In
-
-# populate models in reservation
-async def populate_reservation(reservation: Reservation) -> Reservation:
-    reservation.user = await User.get(reservation.user_id)
-    reservation.hotel = await Hotel.get(reservation.hotel_id)
-    reservation.room = await Room.get(reservation.room_id)
-
-    return await reservation.custom_model_dump()
 
 # helper function to fetch reserved room IDs within a time range
 async def _get_reserved_room_ids(start_date: date, end_date: date, hotel_id: str = None) -> set[str]:
@@ -29,16 +20,8 @@ async def _get_reserved_room_ids(start_date: date, end_date: date, hotel_id: str
     reservations = await Reservation.find(query).to_list()
     return [ObjectId(res.room_id) for res in reservations]
 
-# helper function that returns serialized room lists
-async def _serialize_rooms(rooms: List[Room]) -> List[RoomResponse]:
-    return [await room.custom_model_dump() for room in rooms]
-
-# get all available rooms in a time period
-async def get_all_available_rooms(start_date: date, end_date: date, filters: dict = {}) -> List[Room]:
-    reserved_ids = await _get_reserved_room_ids(start_date, end_date)
-
-    room_query = { "_id": {"$nin": reserved_ids} }
-
+# builds room query
+async def _build_room_query(room_query = {}, filters: dict = {}):
     if "type" in filters:
         room_query["type"] = filters["type"]
     if "min_price" in filters:
@@ -53,32 +36,39 @@ async def get_all_available_rooms(start_date: date, end_date: date, filters: dic
         if not matched_hotel_ids:
             return []
         room_query["hotel_id"] = {"$in": matched_hotel_ids}
+    return room_query
 
+
+# get all available rooms in a time period
+async def get_all_available_rooms(start_date: date, end_date: date, filters: dict = {}) -> List[Room]:
+    reserved_ids = await _get_reserved_room_ids(start_date, end_date)
+    room_query = { "_id": {"$nin": reserved_ids} }
+    room_query = await _build_room_query(room_query, filters)
     rooms = await Room.find(room_query).to_list()
     return rooms
 
 # get all unavailable rooms in a time period
-async def get_all_unavailable_rooms(start_date: date, end_date: date) -> List[Room]:
+async def get_all_unavailable_rooms(start_date: date, end_date: date, filters: dict = {}) -> List[Room]:
     reserved_ids = await _get_reserved_room_ids(start_date, end_date)
     if not reserved_ids:
         return []
-    rooms = await Room.find(In(Room.id, reserved_ids)).to_list()
+    room_query = {"_id": {"$in": reserved_ids}}
+    room_query = await _build_room_query(room_query, filters)
+    rooms = await Room.find(room_query).to_list()
     return rooms
 
 # get all available rooms in a certain hotel in a time period
-async def get_all_available_rooms_in_hotel(hotel_id: str, start_date: date, end_date: date) -> List[Room]:
+async def get_all_available_rooms_in_hotel(hotel_id: str, start_date: date, end_date: date, filters: dict = {}) -> List[Room]:
     reserved_ids = await _get_reserved_room_ids(start_date, end_date, hotel_id)
-    all_rooms = await Room.find({"hotel_id": hotel_id}).to_list()
-    if not reserved_ids:
-        return all_rooms
-    available_rooms = [room for room in all_rooms if room.id not in reserved_ids]
-    return available_rooms
+    room_query = {"hotel_id": hotel_id}
+    if reserved_ids: room_query["_id"] = {"$nin": reserved_ids}
+    room_query = await _build_room_query(room_query, filters)
+    return await Room.find(room_query).to_list()
 
 # get all unavailable rooms in a certain hotel in a time period
-async def get_all_unavailable_rooms_in_hotel(hotel_id: str, start_date: date, end_date: date) -> List[Room]:
+async def get_all_unavailable_rooms_in_hotel(hotel_id: str, start_date: date, end_date: date, filters: dict = {}) -> List[Room]:
     reserved_ids = await _get_reserved_room_ids(start_date, end_date, hotel_id)
-    if not reserved_ids:
-        return []
-    rooms = await Room.find({"hotel_id": hotel_id}).to_list()
-    unavailable_rooms = [room for room in rooms if room.id in reserved_ids]
-    return unavailable_rooms
+    if not reserved_ids: return []
+    room_query = { "hotel_id": hotel_id, "_id": {"$in": reserved_ids} }
+    room_query = await _build_room_query(room_query, filters)
+    return await Room.find(room_query).to_list()

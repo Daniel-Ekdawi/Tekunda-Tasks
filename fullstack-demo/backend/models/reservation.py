@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from datetime import date
 from typing import List, Optional
 
-from lib.enums import ReservationStatus
+from enums import ReservationStatus
 from models.hotel import Hotel
 from models.room import Room
 from models.user import User
