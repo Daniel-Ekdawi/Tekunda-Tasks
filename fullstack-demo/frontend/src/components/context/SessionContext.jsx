@@ -1,8 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { BASE_URL } from "@/constants/URLS";
-import { logout } from "@/api/auth"
+import { logout, validateToken } from "@/api/auth"
 import { useNotification } from "./NotificationContext";
 
 const SessionContext = createContext();
@@ -15,28 +14,17 @@ export const SessionProvider = ({ children }) => {
 
     useEffect(() => {
         const fetchUser = async () => {
-            try {
-                const response = await fetch(`${BASE_URL}/auth/validateToken`, {
-                    credentials: 'include',
-                });
-
-                const result = await response.json()
-                
-                if (!response.ok || response.status == 401) throw new Error()
-                if (response.status == 403 || response.status == 404) throw new Error(result.detail)
-
-                const userData = result
-                if (!userData.role) throw new Error()
-                setUser(userData);
-                setRole(userData?.role || 'guest')
-            } catch (error) {
-                if (error.message) setMessage({ text: error.message, type: 'error' }) 
+            const result = await validateToken()
+            if (result.error) {
+                if (result.error.message) setMessage({ text: result.error.message, type: 'error' })
                 setUser(null);
                 setRole('guest')
                 logout()
-            } finally {
-                setIsReady(true)
+            } else {
+                setUser(result);
+                setRole(result?.role || 'guest')
             }
+            setIsReady(true)
         };
 
         fetchUser();
@@ -49,9 +37,9 @@ export const SessionProvider = ({ children }) => {
         setUser(null)
         setRole('guest')
     }
-    
+
     if (!isReady) return null // to prevent loading wrong session at first
-    
+
     return (
         <SessionContext.Provider value={{
             user,
