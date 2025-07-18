@@ -36,7 +36,7 @@ const ViewerViewRoomsComponent = ({ rooms, setRooms, filters }) => {
         { title: "Reserve Now", onClick: user ? handleReservation : redirectLogin },
     ]
 
-    if (!filters?.start_date || !filters?.end_date) return <div>Please select start and end dates!</div>
+    if (!filters?.start_date || !filters?.end_date) return <div className="mt-3 text-center">Please select start and end dates!</div>
 
     return <ListTableManagement tables={rooms} setTables={setRooms} headers={headers} buttons={buttons} />
 }

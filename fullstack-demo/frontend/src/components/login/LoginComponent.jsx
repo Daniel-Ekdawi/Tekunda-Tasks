@@ -49,7 +49,7 @@ const LoginComponent = () => {
     }
 
     return (<div className="flex flex-col items-center">
-        <form className="flex flex-col gap-3 bg-gray-600 p-4 rounded-xl text-white" onSubmit={handleSubmit}>
+        <form className="w-[35%] flex flex-col gap-3 bg-gray-600 p-4 rounded-xl text-white" onSubmit={handleSubmit}>
             <div className="text-4xl text-center mt-2 mb-6">{loginMode ? "Login" : "Signup"}</div>
             {loginMode && LOGIN_FIELDS.map(loginField => <InputField key={loginField.property} field={loginField} formData={formData} setFormData={setFormData} />)}
             {!loginMode && SIGNUP_FIELDS.map(signupField => <InputField key={signupField.property} field={signupField} formData={formData} setFormData={setFormData} />)}
