@@ -65,7 +65,7 @@ const ListTableManagementBody = ({ tableTitle, tableData, headers, buttons, hand
                     {/* Delete icon */}
                     <div className="absolute flex flex-col left-full ml-4" style={{ width: `${width}vw` }}>
                         {buttons && <div className="flex flex-row gap-3">
-                            {buttons.map(button => <BlueButton key={button.title} text={button.title} onClick={button.onClick.bind(null, rowData)} extraClasses="text-white text-nowrap overflow-hidden text-[8px] md:text-[11px] lg:text-[14px]" />)}
+                            {buttons.map(button => (button.condition?.(rowData) ?? true) && <BlueButton key={button.title} text={button.title} onClick={button.onClick.bind(null, rowData)} extraClasses="text-white text-nowrap overflow-hidden text-[8px] md:text-[11px] lg:text-[14px]" />)}
                         </div>}
 
                         {handleItemUpdate && <button onClick={() => handleItemUpdate(rowData)}>

@@ -5,16 +5,17 @@ import ListTableManagementBody from "@/components/shared/ListTableManagement/Lis
 import { useSession } from "@/components/context/SessionContext";
 import { useNotification } from "@/components/context/NotificationContext";
 
-const ListTableManagement = ({ tables, setTables, headers, buttons, getTablesFunction, getTablesFunctionDependencies = [], deleteItemFunction, handleItemUpdate }) => {
+const ListTableManagement = ({ tables, setTables, headers, buttons, getTablesFunction, getTablesFunctionDependencies = [], deleteItemFunctionById, handleItemUpdate }) => {
     // tables and setTables are useState variables
 
-    // headers is an array of objects { property, title } 
+    // headers is an array of objects { property, title, ?onClick, ?toggleIcon } 
     // where property is the property extracted from the table data
     // and title is the column header of this property
     // (optional) onClick: function that gets triggered when the property is clicked
     // (optional) toggleIcon: a boolean value, if true then the property is viewed as a toggle button instead of True / False
 
-    // buttons is an array of objects { title, onClick }
+    // buttons is an array of objects { title, onClick, ?condition }
+    // condition is a function taking a row item as a param and returns true if the row should display the button next to it
 
     // getTablesFunction is a function that returns tables in the form { table1Title: tableData, table2Title: tableData, ... }
     // getTablesFunctionDependencies is a dependency array for the getTablesFunction useEffect
@@ -24,7 +25,7 @@ const ListTableManagement = ({ tables, setTables, headers, buttons, getTablesFun
 
     // handleItemUpdate is a function that gets called when the object needs to be updated
 
-    const { user }= useSession()
+    const { user } = useSession()
     const { setMessage } = useNotification()
     const [isLoading, setIsLoading] = useState(true)
 
@@ -44,7 +45,7 @@ const ListTableManagement = ({ tables, setTables, headers, buttons, getTablesFun
     const handleItemDelete = async item => {
         const id = item.id
         if (user.id === id) return setMessage({ text: 'Cannot delete own account', type: 'error' }) // for deleting user self account
-        const result = await deleteItemFunction(id)
+        const result = await deleteItemFunctionById(id)
         if (!result || result.error) return setMessage({ text: 'Something went wrong...', type: 'error' })
         setTables(oldTablesData => {
             const newTablesData = {}
@@ -62,11 +63,16 @@ const ListTableManagement = ({ tables, setTables, headers, buttons, getTablesFun
     }
 
     return (<>
-        {isLoading && "Loading..."}
-        {!isLoading && tables && Object.keys(tables).length > 0 && <div>
-            {tables && Object.entries(tables).map(([tableTitle, tableData]) => <ListTableManagementBody key={tableTitle} tableTitle={tableTitle} tableData={tableData} headers={headers} buttons={buttons} handleItemDelete={deleteItemFunction ? handleItemDelete : undefined} handleItemUpdate={handleItemUpdate} />)}
-        </div>}
-        {!isLoading && tables && Object.keys(tables).length === 0 && "There is no data..."}
+        {(() => {
+            if (isLoading) return "Loading..."
+
+            const entries = Object.entries(tables || {})
+            const nonEmpty = entries.filter(([, data]) => data?.length)
+
+            return nonEmpty.length ?
+                nonEmpty.map(([tableTitle, tableData]) => <ListTableManagementBody key={tableTitle} tableTitle={tableTitle} tableData={tableData} headers={headers} buttons={buttons} handleItemDelete={deleteItemFunctionById ? handleItemDelete : undefined} handleItemUpdate={handleItemUpdate} />) :
+                "There is no data..."
+        })()}
     </>)
 }
 

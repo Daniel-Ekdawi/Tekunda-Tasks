@@ -41,10 +41,17 @@ const ViewReservation = ({ hotelId }) => {
         { property: 'status', title: 'Status' },
     ]
 
+    const conditionToCancel = item => {
+        const today = new Date()
+        if (isNaN(Date.parse(item?.start_date))) return true
+        const date = new Date(item.start_date)
+        return (today < date) && item.status !== 'cancelled'
+    }
+
     const buttons = [
-        { title: 'Cancel', onClick: handleCancel }
+        { title: 'Cancel', onClick: handleCancel, condition: conditionToCancel }
     ]
-    .filter(button => user.role === 'viewer' && button.title === 'Cancel')
+        .filter(button => user.role === 'viewer' && button.title === 'Cancel')
 
     const getGroupedReservations = async () => {
         if (user.role === 'viewer') return await getReservationsByUser(user.id)
