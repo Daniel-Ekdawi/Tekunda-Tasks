@@ -9,8 +9,8 @@ const ReservationComponent = () => {
     const { user } = useSession()
     const [hotelId, setHotelId] = useState()
     return <div>
-        {user.role !== 'viewer' && <div className="px-[2%]"><ViewReservationHotelPicker userId={user.role === 'hotel_admin' ? user.id : undefined} setHotelId={setHotelId} /></div>}        
-        {(user.role === 'viewer' || hotelId) && <div className="px-[2%]"><ViewReservation hotelId={hotelId} /></div>}    
+        {user.role !== 'viewer' && <div><ViewReservationHotelPicker userId={user.role === 'hotel_admin' ? user.id : undefined} setHotelId={setHotelId} /></div>}        
+        {(user.role === 'viewer' || hotelId) && <div><ViewReservation hotelId={hotelId} /></div>}    
     </div>
 }
 

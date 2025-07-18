@@ -1,7 +1,7 @@
 import ManageRoomsComponent from "@/components/manage-rooms/ManageRooms"
 
 const HotelDetails = ({ params }) => {
-    return <div className="mt-[10%]">
+    return <div>
         <ManageRoomsComponent params={params} />
     </div>
 }

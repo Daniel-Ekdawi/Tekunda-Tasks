@@ -44,7 +44,7 @@ const ManageRoomsComponent = ({ params }) => {
 
     return <div className="mb-12">
         {/* add a hotel detail component here */}
-        <div className="px-[2%]"><ViewRoomsComponent hotel={hotel} rooms={rooms} setRooms={setRooms} handleItemUpdate={user.role === 'hotel_admin' ? handleItemUpdate : undefined} handleItemDelete={user.role === 'hotel_admin' ? handleItemDelete : undefined} /></div>
+        <div><ViewRoomsComponent hotel={hotel} rooms={rooms} setRooms={setRooms} handleItemUpdate={user.role === 'hotel_admin' ? handleItemUpdate : undefined} handleItemDelete={user.role === 'hotel_admin' ? handleItemDelete : undefined} /></div>
         {user.role === 'hotel_admin' && <RoomFormComponent hotel={hotel} addRoom={handleRoomCreation} updateRoom={handleRoomUpdate} roomUpdating={roomUpdating} setRoomUpdating={setRoomUpdating} />}
     </div>
 }

@@ -1,5 +1,7 @@
+import ProfileComponent from "@/components/profile/ProfileComponent"
+
 const ProfilePage = () => {
-    return <div className="mt-[10%]">This is the profile page!</div>
+    return <ProfileComponent />
 }
 
 export default ProfilePage

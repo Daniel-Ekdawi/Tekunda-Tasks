@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
                             <Navbar />
                             <Notification />
                             <Popup />
-                            {children}
+                            <div className="mt-[7%] px-[2%]">{children}</div>
                         </SessionProvider>
                     </PopupProvider>
                 </NotificationProvider>

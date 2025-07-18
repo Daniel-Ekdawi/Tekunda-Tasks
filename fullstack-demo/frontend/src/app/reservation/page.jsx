@@ -1,7 +1,7 @@
 import ReservationComponent from "@/components/reservation/ReservationComponent"
 
 const ReservationPage = () => {
-    return <div className="mt-[10%]">
+    return <div>
         <ReservationComponent />
     </div>
 }

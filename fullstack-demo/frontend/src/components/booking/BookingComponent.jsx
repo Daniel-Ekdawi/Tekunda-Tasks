@@ -20,7 +20,7 @@ const BookingComponent = () => {
 
     return <div className="mb-12">
         <div className="flex justify-center mb-3"><BookingSearchForm filters={filters} setFilters={setFilters} /></div>
-        <div className="px-[2%]"><ViewerViewRoomsComponent rooms={rooms} setRooms={setRooms} filters={filters} /></div>
+        <div><ViewerViewRoomsComponent rooms={rooms} setRooms={setRooms} filters={filters} /></div>
     </div>
 }
 

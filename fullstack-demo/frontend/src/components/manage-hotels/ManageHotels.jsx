@@ -18,7 +18,7 @@ const ManageHotelsComponent = () => {
     const handleItemUpdate = item => setHotelUpdating(oldValue => (oldValue?.id === item?.id ? { reset: true } : item))
 
     return <div className="mb-12">
-        <div className="px-[2%]"><ViewHotelsComponent hotels={hotels} setHotels={setHotels} handleItemUpdate={user.role === 'hotel_admin' ? handleItemUpdate : undefined} handleItemDelete={deleteHotelById} /></div>
+        <div><ViewHotelsComponent hotels={hotels} setHotels={setHotels} handleItemUpdate={user.role === 'hotel_admin' ? handleItemUpdate : undefined} handleItemDelete={deleteHotelById} /></div>
         {user.role === 'hotel_admin' && <HotelFormComponent addHotel={handleHotelCreation} updateHotel={handleHotelUpdate} hotelUpdating={hotelUpdating} setHotelUpdating={setHotelUpdating} />}
     </div>
 }
