@@ -34,7 +34,7 @@ const ViewReservation = ({ hotelId }) => {
 
     const headers = [
         { property: 'hotel.name', title: 'Hotel' },
-        { property: 'room.number', title: 'Room #' },
+        { property: 'room.number', title: 'Room #', columnWidth: 0.3 },
         { property: 'start_date', title: 'Start Date' },
         { property: 'end_date', title: 'End Date' },
         { property: 'user.username', title: 'User' },

@@ -43,15 +43,15 @@ const ViewHotelsComponent = ({ hotels, setHotels, handleItemDelete, handleItemUp
 
     const headers = [
         { property: "name", title: "Name", onClick: handleHotelItemClick },
-        { property: "phone_number", title: "Phone Number" },
         { property: "email", title: "Email" },
+        { property: "phone_number", title: "Phone Number" },
         { property: "swimming_pools", title: "Pools" },
+        { property: "number_of_rooms", title: "Rooms", columnWidth: 0.5 },
         { property: "max_reservations", title: "Max Capacity" },
         { property: "gym", title: "Gym", onClick: handleHotelPropertyToggle.bind(null, 'gym'), toggleIcon: true },
         { property: "spa", title: "Spa", onClick: handleHotelPropertyToggle.bind(null, 'spa'), toggleIcon: true },
         { property: "wifi", title: "Wi-Fi", onClick: handleHotelPropertyToggle.bind(null, 'wifi'), toggleIcon: true },
         { property: "parking", title: "Parking", onClick: handleHotelPropertyToggle.bind(null, 'parking'), toggleIcon: true },
-        { property: "number_of_rooms", title: "Rooms" },
         { property: "hotel_admin.username", title: "Hotel Admin" },
     ]
     // if user is not hotel admin then they shouldnt have the onClick function available

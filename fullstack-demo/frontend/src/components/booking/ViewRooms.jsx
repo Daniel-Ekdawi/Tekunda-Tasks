@@ -28,7 +28,7 @@ const ViewerViewRoomsComponent = ({ rooms, setRooms, filters }) => {
     const headers = [
         { property: "number", title: "Number" },
         { property: "price", title: "Price" },
-        { property: "description", title: "Description" },
+        { property: "description", title: "Description", columnWidth: 3 },
         { property: "type", title: "Type" },
     ]
 

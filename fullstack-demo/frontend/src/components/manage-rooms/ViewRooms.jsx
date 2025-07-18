@@ -40,7 +40,7 @@ const ViewRoomsComponent = ({ hotel, rooms, setRooms, handleItemUpdate, handleIt
     const headers = [
         { property: "number", title: "Number" },
         { property: "price", title: "Price" },
-        { property: "description", title: "Description" },
+        { property: "description", title: "Description", columnWidth: 3 },
         { property: "type", title: "Type" },
         // { property: "occupied", title: "Occupied", onClick: handleRoomPropertyToggle.bind(null, 'parking'), toggleIcon: true },
     ]

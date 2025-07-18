@@ -12,42 +12,54 @@ const ListTableManagementBody = ({
     handleItemDelete,
     handleItemUpdate,
 }) => {
-    // calculate dynamic width for actions column
     const actionCount = buttons.length + (handleItemUpdate ? 1 : 0) + (handleItemDelete ? 1 : 0);
-    const actionWidth = actionCount * 80; // adjust per-button width as needed
+    const actionWidth = actionCount * 80; // px per action button
+
+    // compute total weight from headers for proportional column widths
+    const totalWeight = headers.reduce(
+        (sum, { columnWidth }) => sum + (columnWidth ?? 1),
+        0
+    );
 
     const columns = [
-        // dynamic columns from headers
-        ...headers.map(({ property, title, onClick, toggleIcon }) => ({
-            title,
-            dataIndex: property,
-            key: property,
-            render: (value, record) => {
-                // nested property resolution
-                const cell = property.split('.').reduce((o, k) => o?.[k], record);
-                if (toggleIcon) {
+        // dynamic columns from headers with proportional widths
+        ...headers.map(({ property, title, onClick, toggleIcon, columnWidth }) => {
+            const weight = columnWidth ?? 1;
+            const widthPercent = (weight / totalWeight) * 100;
+            return {
+                title,
+                dataIndex: property,
+                key: property,
+                width: `${widthPercent}%`,
+                render: (_, record) => {
+                    const cell = property.split('.').reduce((o, k) => o?.[k], record);
+                    if (toggleIcon) {
+                        return (
+                            <Switch
+                                checked={!!cell}
+                                onClick={onClick ? () => onClick(record) : undefined}
+                            />
+                        );
+                    }
                     return (
-                        <Switch
-                            checked={!!cell}
+                        <span
                             onClick={onClick ? () => onClick(record) : undefined}
-                        />
+                            className={onClick ? 'cursor-pointer hover:underline' : ''}
+                        >
+                            {String(cell ?? '')
+                                .charAt(0)
+                                .toUpperCase() + String(cell ?? '').slice(1)}
+                        </span>
                     );
-                }
-                return (
-                    <span
-                        onClick={onClick ? () => onClick(record) : undefined}
-                        className={onClick ? 'cursor-pointer hover:underline' : ''}
-                    >
-                        {String(cell ?? '').charAt(0).toUpperCase() + String(cell ?? '').slice(1)}
-                    </span>
-                );
-            },
-        })),
-        // action column
+                },
+            };
+        }),
+        // action column with dynamic width in px
         {
             title: 'Actions',
             key: 'actions',
             width: actionWidth,
+            fixed: 'right',
             render: (_, record) => (
                 <Space>
                     {buttons.map(({ title, onClick, condition }) =>
@@ -85,7 +97,7 @@ const ListTableManagementBody = ({
     return (
         <div className="mb-6">
             <h2 className="text-xl font-semibold mb-4 capitalize">
-                {tableTitle.replace('_', ' ')}
+                {tableTitle.replace(/_/g, ' ')}
             </h2>
             <Table
                 columns={columns}
@@ -94,6 +106,8 @@ const ListTableManagementBody = ({
                 pagination={false}
                 bordered
                 size="middle"
+                tableLayout="fixed"
+                scroll={{ x: 'max-content' }}
             />
         </div>
     );
