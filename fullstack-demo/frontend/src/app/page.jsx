@@ -1,7 +1,7 @@
+import HomeComponent from '@/components/home/HomeComponent'
+
 const HomePage = () => {
-    return <div className='mt-[10%]'>
-        This is the home page
-    </div>
+    return <HomeComponent />
 }
 
 export default HomePage

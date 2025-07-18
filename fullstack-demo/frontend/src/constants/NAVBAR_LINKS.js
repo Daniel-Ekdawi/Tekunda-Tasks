@@ -1,9 +1,11 @@
 const GUEST_LINKS = [
+    { title: 'Home', url: '' },
     { title: 'Login', url: 'login' },
     { title: 'Book Now', url: 'booking' },
 ]
 
 const VIEWER_LINKS = [
+    { title: 'Home', url: '' },
     { title: 'Profile', url: 'profile' },
     { title: 'Book Now', url: 'booking' },
     { title: 'My Reservations', url: 'reservation' },
@@ -11,6 +13,7 @@ const VIEWER_LINKS = [
 ]
 
 const HOTEL_ADMIN_LINKS = [
+    { title: 'Home', url: '' },
     { title: 'Profile', url: 'profile' },
     { title: 'Hotels', url: 'manage-hotels' },
     { title: 'Reservations', url: 'reservation' },
@@ -18,6 +21,7 @@ const HOTEL_ADMIN_LINKS = [
 ]
 
 const SUPER_ADMIN_LINKS = [
+    { title: 'Home', url: '' },
     { title: 'Profile', url: 'profile' },
     { title: 'Users', url: 'manage-users' },
     { title: 'Hotels', url: 'manage-hotels' },
