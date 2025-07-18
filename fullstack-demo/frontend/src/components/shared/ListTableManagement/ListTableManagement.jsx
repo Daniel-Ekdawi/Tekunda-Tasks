@@ -20,7 +20,7 @@ const ListTableManagement = ({ tables, setTables, headers, buttons, getTablesFun
     // getTablesFunction is a function that returns tables in the form { table1Title: tableData, table2Title: tableData, ... }
     // getTablesFunctionDependencies is a dependency array for the getTablesFunction useEffect
 
-    // deleteItemFunction is a function that gets called with the object that needs to be deleted
+    // deleteItemFunctionById is a function that gets called with the object that needs to be deleted
     // it takes the id of the item to delete
 
     // handleItemUpdate is a function that gets called when the object needs to be updated

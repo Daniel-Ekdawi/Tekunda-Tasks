@@ -54,45 +54,47 @@ const ListTableManagementBody = ({
                 },
             };
         }),
-        // action column with dynamic width in px
-        {
-            title: 'Actions',
-            key: 'actions',
-            width: actionWidth,
-            fixed: 'right',
-            render: (_, record) => (
-                <Space>
-                    {buttons.map(({ title, onClick, condition }) =>
-                        (condition?.(record) ?? true) && (
-                            <Button
-                                key={title}
-                                type="primary"
-                                size="small"
-                                onClick={() => onClick(record)}
-                            >
-                                {title}
-                            </Button>
-                        )
-                    )}
-                    {handleItemUpdate && (
-                        <Button
-                            icon={<EditOutlined />}
-                            size="small"
-                            onClick={() => handleItemUpdate(record)}
-                        />
-                    )}
-                    {handleItemDelete && (
-                        <Button
-                            icon={<DeleteOutlined />}
-                            size="small"
-                            danger
-                            onClick={() => handleItemDelete(record)}
-                        />
-                    )}
-                </Space>
-            ),
-        },
     ];
+
+    const actionColumn = // action column with dynamic width in px
+    {
+        title: 'Actions',
+        key: 'actions',
+        width: actionWidth,
+        fixed: 'right',
+        render: (_, record) => (
+            <Space>
+                {buttons.map(({ title, onClick, condition }) =>
+                    (condition?.(record) ?? true) && (
+                        <Button
+                            key={title}
+                            type="primary"
+                            size="small"
+                            onClick={() => onClick(record)}
+                        >
+                            {title}
+                        </Button>
+                    )
+                )}
+                {handleItemUpdate && (
+                    <Button
+                        icon={<EditOutlined />}
+                        size="small"
+                        onClick={() => handleItemUpdate(record)}
+                    />
+                )}
+                {handleItemDelete && (
+                    <Button
+                        icon={<DeleteOutlined />}
+                        size="small"
+                        danger
+                        onClick={() => handleItemDelete(record)}
+                    />
+                )}
+            </Space>
+        ),
+    }
+    if (actionCount > 0) columns.push(actionColumn)
 
     return (
         <div className="mb-6">

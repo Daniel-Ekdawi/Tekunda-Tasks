@@ -63,7 +63,7 @@ const ViewHotelsComponent = ({ hotels, setHotels, handleItemDelete, handleItemUp
         return { hotels }
     }
 
-    return <ListTableManagement tables={hotels} setTables={setHotels} headers={headers} getTablesFunction={getHotelsAsObjects.bind(null, user.role === 'hotel_admin' ? user.id : null)} deleteItemFunction={handleItemDelete} handleItemUpdate={handleItemUpdate} />
+    return <ListTableManagement tables={hotels} setTables={setHotels} headers={headers} getTablesFunction={getHotelsAsObjects.bind(null, user.role === 'hotel_admin' ? user.id : null)} deleteItemFunctionById={handleItemDelete} handleItemUpdate={handleItemUpdate} />
 }
 
 export default ViewHotelsComponent

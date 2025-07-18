@@ -41,7 +41,7 @@ const ManageAllUsersComponent = () => {
         { property: "is_active", title: "Active Status", onClick: handleUserActiveToggle, toggleIcon: true },
     ];
 
-    return <ListTableManagement tables={users} setTables={setUsers} headers={headers} getTablesFunction={getAllUsersCategorized} deleteItemFunction={deleteUserById} />
+    return <ListTableManagement tables={users} setTables={setUsers} headers={headers} getTablesFunction={getAllUsersCategorized} deleteItemFunctionById={deleteUserById} />
 }
 
 export default ManageAllUsersComponent

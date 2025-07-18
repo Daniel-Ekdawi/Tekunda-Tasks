@@ -53,7 +53,7 @@ const ViewRoomsComponent = ({ hotel, rooms, setRooms, handleItemUpdate, handleIt
         return rooms
     }
     
-    return <ListTableManagement tables={rooms} setTables={setRooms} headers={headers} getTablesFunction={getRoomsAsObjects} deleteItemFunction={handleItemDelete} handleItemUpdate={handleItemUpdate} />
+    return <ListTableManagement tables={rooms} setTables={setRooms} headers={headers} getTablesFunction={getRoomsAsObjects} deleteItemFunctionById={handleItemDelete} handleItemUpdate={handleItemUpdate} />
 }
 
 export default ViewRoomsComponent
