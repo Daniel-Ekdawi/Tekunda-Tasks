@@ -50,9 +50,15 @@ async def get_user(user_id: str):
 @router.patch("/{user_id}", response_model=UserResponse)
 async def update_user(user_id: str, user_update: UserUpdate):
     try:
-        user_data = user_update.custom_model_dump(exclude_unset=True)
-        user_oid = ObjectId(user_id)
-
+        user_data = user_update.model_dump(exclude_unset=True, exclude_none=True)
+        if not user_data:
+            raise HTTPException(status_code=400, detail="No fields provided")
+    
+        try:
+            user_oid = ObjectId(user_id)
+        except Exception:
+            raise HTTPException(status_code=400, detail="Invalid user ID")
+        
         updated_user = await User.find_one(User.id == user_oid).update(
             {"$set": user_data},
             response_type=User
@@ -62,7 +68,6 @@ async def update_user(user_id: str, user_update: UserUpdate):
             raise HTTPException(status_code=404, detail="User not found")
 
         return await updated_user.custom_model_dump()
-
     except HTTPException as e:
         raise e    
     except DuplicateKeyError:

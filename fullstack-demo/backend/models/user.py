@@ -52,6 +52,9 @@ class UserUpdate(BaseModel):
     password: Optional[str] = Field(default=None)
     date_of_birth: Optional[date] = Field(default=None)
     gender: Optional[str] = Field(default=None, min_length=1, max_length=1)
+    phone_number: Optional[str] = Field(default=None, min_length=10, max_length=15)
+    job: Optional[str] = Field(default=None)
+    
 
 class UserResponse(BaseModel):
     id: str
